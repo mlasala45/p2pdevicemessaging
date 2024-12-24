@@ -1,5 +1,5 @@
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useState } from 'react';
+import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -18,11 +18,13 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import { getPublicAddress } from '../networking/P2PNetworking';
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+function Section({ children, title }: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -51,9 +53,23 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 function HomeScreen(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const [addressStr, setAddressStr] = useState('')
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    if (addressStr == '') {
+      getPublicAddress().then(data => {
+        const str = `${data.ipv4}:${data.port}`
+        setAddressStr(str)
+      }).catch(err => {
+        console.warn("Error getting public address")
+        console.warn(err.message)
+      })
+    }
+  })
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -69,9 +85,11 @@ function HomeScreen(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>Skibidi Rizz</Text> to change this
-            screen and then come back to see your edits.
+          <Section title="Public Address">
+            {addressStr == ''
+              ? "[Fetching address...]"
+              : addressStr
+            }
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
