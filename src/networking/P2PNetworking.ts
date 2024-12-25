@@ -20,6 +20,20 @@ function parseCandidateStr(candidateStr : string) {
   }
 }
 
+function isValidIPv4(ip: string): boolean {
+  const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+  
+  if (!ipv4Pattern.test(ip)) {
+      return false;
+  }
+
+  const octets = ip.split('.');
+  return octets.every(octet => {
+      const num = parseInt(octet, 10);
+      return num >= 0 && num <= 255;
+  });
+}
+
 export function getPublicAddress(): Promise<PublicNetworkAddress> {
   return new Promise(async (resolve, reject) => {
     const configuration = {
@@ -37,6 +51,7 @@ export function getPublicAddress(): Promise<PublicNetworkAddress> {
         //console.log(`icecandidate ${event.candidate.candidate}`)
         const candidate = parseCandidateStr(event.candidate.candidate);
         if (candidate.type == 'srflx') {
+          if(!isValidIPv4(candidate.ip)) return
           resolve({ ipv4: candidate.ip, port: candidate.port });
         }
       }

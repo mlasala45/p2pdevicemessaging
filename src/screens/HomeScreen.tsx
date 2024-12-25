@@ -19,6 +19,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { getPublicAddress } from '../networking/P2PNetworking';
+import { encodeIpv4 } from '../util/ipaddrcode'
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -53,17 +54,17 @@ function Section({ children, title }: SectionProps): React.JSX.Element {
 function HomeScreen(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const [addressStr, setAddressStr] = useState('')
+  const [address, setAddress] = useState({ ipv4: '', port: 0 })
+  const addressFound = address.ipv4 != ''
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   useEffect(() => {
-    if (addressStr == '') {
+    if (!addressFound) {
       getPublicAddress().then(data => {
-        const str = `${data.ipv4}:${data.port}`
-        setAddressStr(str)
+        setAddress(data)
       }).catch(err => {
         console.warn("Error getting public address")
         console.warn(err.message)
@@ -71,6 +72,16 @@ function HomeScreen(): React.JSX.Element {
     }
   })
 
+  let addressReadout;
+  if(addressFound) {
+    addressReadout = <React.Fragment>
+      <Text>{`${address.ipv4}:${address.port}\n`}</Text>
+      <Text>Code: </Text>
+      <Text style={{fontWeight: 'bold'}}>{encodeIpv4(address.ipv4)}</Text>
+      <Text>{"\nPort: "}</Text>
+      <Text style={{fontWeight: 'bold'}}>{address.port}</Text>
+    </React.Fragment>
+  }
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -86,10 +97,9 @@ function HomeScreen(): React.JSX.Element {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Section title="Public Address">
-            {addressStr == ''
-              ? "[Fetching address...]"
-              : addressStr
-            }
+            {addressFound
+            ? addressReadout
+            : "[Fetching address...]"}
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />
