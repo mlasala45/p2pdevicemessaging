@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 const imageInlineSizeLimit = parseInt(
     process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
@@ -108,6 +109,9 @@ module.exports = {
             templateParameters: {
                 PUBLIC_URL: publicUrl,
             },
+        }),
+        new DefinePlugin({
+            __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
         }),
     ],
     devServer: {
