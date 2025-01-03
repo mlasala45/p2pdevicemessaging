@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
     },
     textInner: {
         "color": "rgba(28, 28, 30, 0.68)",
-        "fontFamily": "sans-serif-medium",
-        "fontWeight": "normal",
+        "fontFamily": 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+        "fontWeight": 500,
         "lineHeight": 24,
         "textAlignVertical": "center"
     },
