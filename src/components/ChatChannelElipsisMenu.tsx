@@ -1,14 +1,14 @@
 import React, { useState, useRef, useContext, useEffect } from 'react'
 import { Menu, Divider, Dialog, Text, Button, Portal } from 'react-native-paper';
-import { allChatChannelsData } from '../ChatData';
-import { ToastAndroid } from 'react-native';
-import { AppLevelActions } from '../../App';
+import { allChatChannelsContentData, deleteChatChannel, onChannelContentModified } from '../ChatData';
+import { AppLevelActions, forceRerenderApp } from '../App';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '@react-navigation/native';
 
 import { getCurrentRouteKey } from '../util/navigation';
-import { connectToHost, disconnectFromHost } from '../UserActions';
-import { getSocketStatus, isConnectedToRemoteHost, SocketStatus } from '../Networking';
+import { DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
+import Toast from 'react-native-toast-message';
+import { disconnectPeerConnection, checkPeerConnectionStatus, SocketStatus } from '../networking/P2PNetworking';
+import { connectExistingChatChannel } from '../networking/ChatNetworking';
 
 function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConnectionStatus_parent }: Props) {
     const appLevelActions = useContext(AppLevelActions)
@@ -21,14 +21,14 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
     const [connectionStatus, setConnectionStatus] = useState(SocketStatus.Disconnected)
 
     useEffect(() => {
-        setConnectionStatus(getSocketStatus(channelId))
+        setConnectionStatus(checkPeerConnectionStatus(channelId))
     })
 
     //Dialog - Clear
 
     function showDialog_clear() {
         onDismiss()
-        messageHistorySizeRef.current = allChatChannelsData[channelId]?.messages.length || 0
+        messageHistorySizeRef.current = allChatChannelsContentData.get(channelId)?.messages.length || 0
         setDialogOpen_clear(true)
     }
 
@@ -38,11 +38,20 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
 
     function confirmDialog_clear() {
         hideDialog_clear()
-        appLevelActions.clearChatHistory(channelId)
+        const contentData = allChatChannelsContentData.get(channelId)
+        console.log("confirmDialog_clear")
+        console.dir(contentData)
+        if (contentData) {
+            contentData.messages = []
+            onChannelContentModified(channelId)
+            forceRerenderApp()
 
-        //If we currently have that channel open, we need to rerender
-        if (getCurrentRouteKey(navigation) == channelId) {
-            navigation.navigate(channelId, { forceRerender: new Date().toISOString() });
+            //If we currently have that channel open, we need to rerender
+            const channelName = toString(channelId) //TODO
+            if (getCurrentRouteKey(navigation) == channelName) {
+                // @ts-ignore
+                navigation.navigate(channelName, { forceRerender: new Date().toISOString() });
+            }
         }
     }
 
@@ -59,33 +68,27 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
 
     function confirmDialog_delete() {
         hideDialog_delete()
-        appLevelActions.deleteChatConnection(channelId)
+        deleteChatChannel(channelId)
+        //@ts-ignore
         navigation.navigate('Home')
-        ToastAndroid.show(`Deleted connection: ${channelId}`, ToastAndroid.SHORT)
+        Toast.show({
+            type: 'success',
+            text1: `Deleted connection: ${channelId}`, //TODO: Use channel name
+            visibilityTime: 2000
+        })
     }
 
     //Connect/Disconnect
 
     function menuAction_connectToHost() {
         onDismiss()
-        connectToHost(channelId, {
-            onConnect() {
-                ToastAndroid.show(`Connected to ${channelId}`, ToastAndroid.SHORT)
-                setConnectionStatus_parent(SocketStatus.Connected)
-            },
-            onError(error : Error) {
-                setConnectionStatus_parent(SocketStatus.ConnectionError)
-            }
-        })
+        setConnectionStatus_parent(SocketStatus.Connecting) //TODO: Handle Errors
+        connectExistingChatChannel(channelId)
     }
 
     function menuAction_disconnectFromHost() {
         onDismiss()
-        const success = disconnectFromHost(channelId)
-        if (success) {
-            setConnectionStatus_parent(SocketStatus.Disconnected)
-            ToastAndroid.show(`Disconnected from ${channelId}`, ToastAndroid.SHORT)
-        }
+        disconnectPeerConnection(channelId)
     }
 
     const alertColor = 'red';
@@ -133,8 +136,8 @@ interface Props {
     visible: boolean,
     onDismiss: () => void,
     anchor: React.ReactNode | { x: number, y: number },
-    channelId: string,
-    setConnectionStatus_parent: (value: SocketStatus) => void
+    channelId: DeviceIdentifier,
+    setConnectionStatus_parent: (value: SocketStatus) => void,
 }
 
 export default ChatScreenElipsisMenu;

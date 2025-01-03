@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Pressable } from 'react-native';
 import { ActivityIndicator, Icon, IconButton } from 'react-native-paper';
 import ChatChannelElipsisMenu from './ChatChannelElipsisMenu';
-import { useNavigation } from '@react-navigation/native';
+import { checkPeerConnectionStatus } from '../networking/P2PNetworking';
+import { SocketStatus } from '../networking/P2PNetworking';
 
-import { getSocketStatus, isConnectedToRemoteHost, SocketStatus } from '../Networking';
+import { DeviceIdentifier } from '../networking/DeviceIdentifier';
 
 function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
     const [isElipsisMenuOpen, setIsElipsisMenuOpen] = useState(false)
@@ -19,7 +20,7 @@ function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
     }
 
     useEffect(() => {
-        setConnectionStatus(getSocketStatus(channelId))
+        setConnectionStatus(checkPeerConnectionStatus(channelId))
     })
 
     return (
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
 interface Props {
     label: string,
     connected: boolean,
-    channelId: string
+    channelId: DeviceIdentifier
 }
 
 export default ChatChannelDrawerItem;

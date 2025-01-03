@@ -1,0 +1,2 @@
+//TODO: Figure out if there is useful type information available; currently uncommenting this line trades a nonfatal error for more annoying type errors
+//declare module 'react-native-webrtc-web-shim';

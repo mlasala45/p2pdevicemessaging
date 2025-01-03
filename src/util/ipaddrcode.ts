@@ -6,7 +6,7 @@ function getCharForDigitVal(digitVal: number): string {
     } else if (digitVal >= 26 && digitVal <= 35) {
         return String.fromCharCode(digitVal - 26 + 48); // 0-9
     } else {
-        throw new Error(`digitVal must be between 0 and ${CODE_LEXICON_SIZE-1}, inclusive. (Received ${digitVal})`);
+        throw new Error(`digitVal must be between 0 and ${CODE_LEXICON_SIZE - 1}, inclusive. (Received ${digitVal})`);
     }
 }
 
@@ -77,4 +77,9 @@ export function decodeToIpv4(codeStr: string): string {
     const octet4 = num & 0xFF;
 
     return `${octet1}.${octet2}.${octet3}.${octet4}`;
+}
+
+export function isCodeValid(code: string) {
+    const regex = /^[A-Za-z0-9]{3}-[A-Za-z0-9]{4}$/;
+    return regex.test(code);
 }

@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useLayoutEffect } from 'react';
-import { View, FlatList, Text, Animated } from 'react-native';
+import { View, FlatList, Text, Animated, Platform } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
-import storage from '../Storage'
-import { allChatChannelsData, ChatMessageData, ChatMessageStatus, loadChannelFromStorage } from '../ChatData';
-import { enqueueOutboundMessage, MessageRawData, SocketStatus } from '../Networking';
+import { allChatChannelsContentData, ChatMessageData, ChatMessageStatus, loadChannelContentFromStorage, onChannelContentModified } from '../ChatData';
 import ChatChannelElipsisMenu from '../components/ChatChannelElipsisMenu';
 import { toTimeString } from '../util/date';
+import { attemptToProcessReceivedMessages, attemptToSendQueuedMessages, enqueueOutboundMessage, isMessagePending, MessageRawData } from '../networking/ChatNetworking';
 
 import styles from './styles-ChatScreen'
 
-import { AppLevelActions } from '../../App';
+import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
+import ArrayDictionary from '../util/ArrayDictionary';
+import Toast from 'react-native-toast-message';
+import { checkPeerConnectionStatus, SocketStatus } from '../networking/P2PNetworking';
+import { displayNotification } from '../util/Notifications';
+import { enqueuePushNotification } from '../foreground-service';
 
 function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData & { onLayout: () => void }) {
     /**Does the message belong to the local host? */
@@ -17,12 +21,16 @@ function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData 
     const showStateMessage = true
 
     let stateMessageIsError = false
-    let stateMessage : string = ''
-    if(status == ChatMessageStatus.ReceivedFromRemoteHost || status == ChatMessageStatus.Delivered) {
+    let stateMessage: string = ''
+    if (status == ChatMessageStatus.ReceivedFromRemoteHost || status == ChatMessageStatus.Delivered) {
         stateMessage = toTimeString(new Date(timeSent))
     }
-    else if(status == ChatMessageStatus.PendingSend) {
+    else if (status == ChatMessageStatus.PendingSend) {
         stateMessage = 'Pending'
+        stateMessageIsError = true
+    }
+    else if (status == ChatMessageStatus.NotSent) {
+        stateMessage = 'Not Sent'
         stateMessageIsError = true
     }
 
@@ -44,11 +52,7 @@ function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData 
                 ...(local ? styles.chatBubbleRight : styles.chatBubbleLeft)
             }}
                 onLayout={onLayout}>
-                <Text style={{
-                    textAlign: 'left',
-                    maxWidth: '70%',
-                    color: 'white'
-                }}>{contentStr}</Text>
+                <Text style={styles.chatBubbleText}>{contentStr}</Text>
             </View >
 
         </React.Fragment >
@@ -56,32 +60,36 @@ function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData 
 }
 
 
-function ChatBubbleInvisible({ contentStr, viewRef }: { contentStr: string, viewRef: React.RefObject<Text> }) {
+function ChatBubbleInvisible({ contentStr, viewRef }: { contentStr: string, viewRef: React.RefObject<View> }) {
     return (
         <View style={{
             ...styles.chatBubbleCommon,
             position: 'absolute',
             opacity: 0,
+            backgroundColor: 'orange'
         }}
+            id='invisible-chat-bubble'
             ref={viewRef}>
             <Text style={{
-                textAlign: 'left',
-                maxWidth: '70%',
+                ...styles.chatBubbleText,
                 opacity: 0,
-                color: 'black',
-                backgroundColor: 'red'
             }}>{contentStr}</Text>
         </View >
     )
 }
 
-export const onMessageReceivedCallbacks: Record<string, (data : MessageRawData) => void> = {}
-export const onMessageDeliveredCallbacks: Record<string, (id : string) => void> = {}
-
-//TODO: Decide how to type 'route'
+interface ChatScreenNetworkingCallbacks {
+    id: DeviceIdentifier,
+    onMessageReceived: (data: MessageRawData) => void,
+    onMessageDelivered: (msgId: string) => void,
+    onConnected: () => void,
+    onDisconnected: () => void,
+    onConnectionStateChanged: (newStatus: SocketStatus) => void
+}
+export const chatScreenNetworkCallbacks = new ArrayDictionary<DeviceIdentifier, ChatScreenNetworkingCallbacks>(KeyFunctions_DeviceIdentifier)
+//TODO: Decide how to set 'route' var type
 function ChatScreen({ navigation, route }: Props): React.JSX.Element {
-    const appLevelActions = useContext(AppLevelActions)
-    const connection = route.params?.connection as string;
+    const channelId: DeviceIdentifier = route.params?.channelId
 
     //Core states
     const [inputText, setInputText] = React.useState('')
@@ -100,7 +108,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
     //Refs
     const scrollOffset = React.useRef(new Animated.Value(0)).current;
     const flatListRef = React.useRef<FlatList>(null)
-    const invisibleChatBubbleRef = React.useRef<Text>(null)
+    const invisibleChatBubbleRef = React.useRef<View>(null)
     const menuButtonRef = React.useRef<View>(null)
     const menuPosition = React.useRef({ x: 0, y: 0 })
 
@@ -116,17 +124,6 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
     function closeElipsisMenu() {
         setIsElipsisMenuOpen(false);
-    }
-
-    function userAction_clearChatHistory() {
-        allChatChannelsData[connection].messages = []
-        forceUpdate()
-    }
-
-    function userAction_deleteChatConnection() {
-        userAction_clearChatHistory()
-        appLevelActions.deleteChatConnection(connection)
-        navigation.navigate('Home')
     }
 
     useLayoutEffect(() => {
@@ -150,10 +147,10 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
     //The first time the component is rendered, retrieve the chat history from storage
     useEffect(() => {
         console.log(`Chat channel data load`)
-        const channelId = connection
-        loadChannelFromStorage(connection).then(() => {
+        loadChannelContentFromStorage(channelId).then(() => {
             console.log(`Check phony`)
-            if (true && !allChatChannelsData[channelId].phonyGenerated) {
+            const channelContentData = allChatChannelsContentData.get(channelId)!
+            if (!channelContentData.phonyGenerated) {
                 console.log(`Phony not generated; generating.`);
                 [{
                     id: '0',
@@ -185,39 +182,72 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                     status: ChatMessageStatus.Delivered,
                     timeSent: 4
                 }].forEach((msgData) => {
-                    allChatChannelsData[channelId].messages.unshift(msgData)
+                    channelContentData.messages.unshift(msgData)
                 })
-                allChatChannelsData[channelId].phonyGenerated = true;
+                channelContentData.phonyGenerated = true;
             }
             else {
                 console.log(`Phony already generated`)
-                console.log(`Last message: ${allChatChannelsData[channelId].messages[0].contentStr}`);
+                if (channelContentData.messages.length > 0) console.log(`Last message: ${channelContentData.messages[0].contentStr}`);
             }
-            forceUpdate();
+            forceRerender();
         })
     }, [])
 
     useEffect(() => {
-        onMessageReceivedCallbacks[connection] = onMessageReceived;
-        onMessageDeliveredCallbacks[connection] = onMessageDelivered;
+        chatScreenNetworkCallbacks.set({
+            id: channelId,
+            onMessageReceived,
+            onMessageDelivered,
+            onConnected,
+            onDisconnected,
+            onConnectionStateChanged
+        })
+
+        setConnectionStatus(checkPeerConnectionStatus(channelId))
+
+        attemptToProcessReceivedMessages()
     })
 
     //TODO: Refactor so only the invisible chat bubble rerenders
     useEffect(() => {
+        if(!allChatChannelsContentData.containsKey(channelId)) return; //Channel contents are not yet loaded
+
         console.log(`Check pre-measure queue. length=${incomingMessageQueue_premeasurement.length}`)
         if (incomingMessageQueue_premeasurement.length > 0) {
-            //The queue is not empty, which means that the InvisibleChatBubble has been populated with the first element of the queue
-            invisibleChatBubbleRef.current?.measure((x, y, width, height) => {
-                console.log(`onMeasure; height=${height}`)
-                //Add the item to the post-measurement queue
+            if (invisibleChatBubbleRef.current) {
+                console.log("invisibleChatBubbleRef is PRESENT:")
+                console.dir(invisibleChatBubbleRef.current)
+            }
+            else {
+                console.log("invisibleChatBubbleRef is MISSING!")
+            }
+
+            if (Platform.OS == "web") {
+                // @ts-ignore
+                const rect = invisibleChatBubbleRef.current!.getBoundingClientRect();
                 setIncomingMessageQueue_postmeasurement(prevData => [
                     ...prevData,
                     {
-                        height: height,
+                        height: rect.height,
                         messageData: incomingMessageQueue_premeasurement[0]
                     }
                 ])
-            })
+            }
+            else {
+                //The queue is not empty, which means that the InvisibleChatBubble has been populated with the first element of the queue
+                invisibleChatBubbleRef.current!.measure((x, y, width, height) => {
+                    console.log(`onMeasure; height=${height}`)
+                    //Add the item to the post-measurement queue
+                    setIncomingMessageQueue_postmeasurement(prevData => [
+                        ...prevData,
+                        {
+                            height: height,
+                            messageData: incomingMessageQueue_premeasurement[0]
+                        }
+                    ])
+                })
+            }
 
             //Remove the item from the previous queue. The dispatched measurement SHOULD remain valid (TODO: Confirm)
             const id = incomingMessageQueue_premeasurement[0].id
@@ -230,12 +260,8 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             const height = incomingMessageQueue_postmeasurement[0].height
             const messageData = incomingMessageQueue_postmeasurement[0].messageData
 
-            allChatChannelsData[connection].messages.unshift(messageData)
-            storage.save({
-                key: 'chatChannelsData',
-                id: connection,
-                data: allChatChannelsData[connection]
-            })
+            allChatChannelsContentData.get(channelId)!.messages.unshift(messageData)
+            onChannelContentModified(channelId)
 
             //Remove the message from the incoming queue
             setIncomingMessageQueue_postmeasurement(prevQueue => prevQueue.filter((item) => item.messageData.id != messageData.id))
@@ -247,13 +273,22 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         }
     })
 
+    useEffect(() => {
+        channelContentData?.messages.forEach(msgData => {
+            if(msgData.status == ChatMessageStatus.PendingSend && !isMessagePending(msgData.id)) {
+                msgData.status = ChatMessageStatus.NotSent
+            }
+        });
+    })
+
     console.log(`Rerender; queue.length=${incomingMessageQueue_premeasurement.length}`)
 
-    function forceUpdate() {
+    function forceRerender() {
         setToggleToUpdate(!toggleToUpdate)
     }
 
     function sendMessage(message: string) {
+        console.log("sendMessage", message)
         setInputText('') //TODO: Clearing this late Could result in multiple sends from spamming the button. Rewrite to prevent.
         const msgData = {
             id: Date.now().toString(),
@@ -262,7 +297,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             timeSent: Date.now()
         }
         addNewMessageToAnimationQueue(msgData)
-        enqueueOutboundMessage(connection, {message, timeSent: Date.now()}, msgData.id)
+        enqueueOutboundMessage(channelId, { message, timeSent: Date.now() }, msgData.id)
     }
 
     function addNewMessageToAnimationQueue(messageData: ChatMessageData) {
@@ -273,7 +308,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         //console.log('onMessageAddedToChatHistory')
     }
 
-    function onMessageReceived(data : MessageRawData) {
+    function onMessageReceived(data: MessageRawData) {
         console.log(`ChatScreen.onMessageReceived; message=${data.message}`)
         addNewMessageToAnimationQueue({
             id: Date.now().toString(),
@@ -281,20 +316,36 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             status: ChatMessageStatus.ReceivedFromRemoteHost,
             timeSent: data.timeSent
         })
+
+        enqueuePushNotification({
+            title: toString(channelId),
+            body: data.message,
+            notifChannelId: 'default'
+        })
     }
 
-    function onMessageDelivered(id : string) {
-        const msg = allChatChannelsData[connection].messages.find(msg => msg.id == id)
+    function onMessageDelivered(id: string) {
+        const msg = allChatChannelsContentData.get(channelId)!.messages.find(msg => msg.id == id)
         console.log(`onMessageDelivered id=${id}`)
-        if(msg)  {
+        if (msg) {
             msg.status = ChatMessageStatus.Delivered
         }
-        else
-        {
+        else {
             console.log("Failed to find message")
         }
-        
-        forceUpdate()
+
+        forceRerender()
+    }
+
+    function onConnected() {
+    }
+
+    function onDisconnected() {
+    }
+
+    function onConnectionStateChanged(newStatus: SocketStatus) {
+        setConnectionStatus(newStatus)
+        attemptToSendQueuedMessages()
     }
 
     /**
@@ -325,23 +376,32 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
     console.log(`Rerender. menuPosition=${menuPosition.current.x},${menuPosition.current.y}`)
 
+    const channelContentData = allChatChannelsContentData.get(channelId)
     return (
         <View style={styles.chatScreen}>
-            {allChatChannelsData[connection] &&
+            {channelContentData &&
                 <Animated.View style={{ transform: [{ translateY: scrollOffset }] }}>
                     <FlatList
-                        data={allChatChannelsData[connection].messages}
+                        data={channelContentData.messages}
                         renderItem={({ item }) => <ChatBubble {...item} onLayout={onChatBubbleLayout} />}
                         keyExtractor={item => item.id}
                         inverted={true}
                         ref={flatListRef}
                     />
                 </Animated.View>}
+            {connectionStatus != SocketStatus.Connected &&
+                <Text style={{
+                    color: 'red',
+                    alignSelf: 'flex-end',
+                    marginRight: 55
+                }}>Not Connected</Text>
+            }
             <View style={styles.footer}>
                 <View style={styles.textInputContainer}>
                     <TextInput
                         value={inputText}
                         onChangeText={text => setInputText(text)}
+                        onSubmitEditing={() => sendMessage(inputText)}
                         style={styles.textInput}
                         dense
                     />
@@ -354,13 +414,12 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                 </View>
             </View>
             {/* Invisible chat bubble is used to measure the exact height of new chat bubbles before they are added to the screen. */}
-            {incomingMessageQueue_premeasurement.length > 0 &&
-                <ChatBubbleInvisible contentStr={incomingMessageQueue_premeasurement[0].contentStr} viewRef={invisibleChatBubbleRef} />}
+            <ChatBubbleInvisible contentStr={incomingMessageQueue_premeasurement.length > 0 && incomingMessageQueue_premeasurement[0].contentStr || ''} viewRef={invisibleChatBubbleRef} />
             <ChatChannelElipsisMenu
                 visible={isElipsisMenuOpen}
                 onDismiss={closeElipsisMenu}
                 anchor={menuPosition.current}
-                channelId={connection}
+                channelId={channelId}
                 setConnectionStatus_parent={setConnectionStatus}
             />
         </View>

@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
         lineHeight: 18,
         marginBottom: 5,
         backgroundColor: '#6495ED',
+        maxWidth: '70%',
     },
     chatBubbleLeft: {
         alignSelf: 'flex-start',
@@ -28,6 +29,10 @@ const styles = StyleSheet.create({
     chatBubbleRight: {
         alignSelf: 'flex-end',
         justifyContent: 'flex-end'
+    },
+    chatBubbleText: {
+        textAlign: 'left',
+        color: 'white',
     },
     footer: {
         flexDirection: 'row',

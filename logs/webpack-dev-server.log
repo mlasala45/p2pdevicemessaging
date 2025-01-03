@@ -1,0 +1,704 @@
+<i> [webpack-dev-server] Project is running at:
+<i> [webpack-dev-server] Loopback: http://localhost:8081/, http://[::1]:8081/
+<i> [webpack-dev-server] On Your Network (IPv4): http://172.22.125.101:8081/
+<i> [webpack-dev-server] Content not from webpack is served from '/home/mlasala/AndroidStudioProjects/mobile/public' directory
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/Storage.web.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/Storage.web.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/Toast.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/Toast.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/Networking.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/Networking.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/screens/HomeScreen.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/screens/HomeScreen.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/components/DevicesDrawerContent.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/components/DevicesDrawerContent.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/ChatData.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/ChatData.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/components/AddDeviceDialog.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/components/AddDeviceDialog.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/screens/ChatScreen.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/screens/ChatScreen.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/ipaddrcode.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/ipaddrcode.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/networking/P2PNetworking.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/networking/P2PNetworking.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/date.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/date.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/components/ChatChannelElipsisMenu.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/components/ChatChannelElipsisMenu.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/screens/styles-ChatScreen.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/screens/styles-ChatScreen.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-webrtc-web-shim/index.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-webrtc-web-shim/index.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/UserActions.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/UserActions.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/navigation.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/navigation.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/style.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/util/style.ts <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-webrtc-web-shim/src/react-native-webrtc-web-shim.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-webrtc-web-shim/src/react-native-webrtc-web-shim.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/MaterialCommunityIcons.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/MaterialCommunityIcons.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-webrtc-web-shim/src/RTCView.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-webrtc-web-shim/src/RTCView.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/create-icon-set.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/create-icon-set.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/NativeRNVectorIcons.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/NativeRNVectorIcons.web.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/create-icon-source-cache.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/create-icon-source-cache.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/icon-button.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/icon-button.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/ensure-native-module-available.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/ensure-native-module-available.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/object-utils.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/node_modules/react-native-vector-icons/lib/object-utils.js <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+asset bundle.js 3.76 MiB [emitted] (name: main) 1 related asset
+asset index.html 731 bytes [emitted]
+orphan modules 450 KiB [orphan] 160 modules
+runtime modules 27.5 KiB 13 modules
+modules by path ./node_modules/ 2.9 MiB
+  javascript modules 2.74 MiB 558 modules
+  asset modules 3.98 KiB 6 modules
+  ./node_modules/react-native-vector-icons/glyphmaps/MaterialCommunityIcons.json 160 KiB [built] [code generated]
+modules by path ./src/ 55.3 KiB 17 modules
+modules by path ./*.js 440 bytes
+  ./index.web.js 389 bytes [built] [code generated]
+  ./gesture-handler.js 51 bytes [built] [code generated]
+./app.json 50 bytes [built] [code generated]
+webpack 5.97.1 compiled successfully in 2252 ms
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+<i> [webpack-dev-middleware] wait until bundle finished: /
+assets by path *.js 3.76 MiB
+  asset bundle.js 3.76 MiB [emitted] (name: main) 1 related asset
+  asset main.b640de4e17dd4ba9a38e.hot-update.js 351 bytes [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset index.html 754 bytes [emitted]
+asset main.b640de4e17dd4ba9a38e.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.76 MiB (3.51 MiB) = bundle.js 3.76 MiB main.b640de4e17dd4ba9a38e.hot-update.js 351 bytes 2 auxiliary assets
+cached modules 3.39 MiB [cached] 745 modules
+runtime modules 27.5 KiB 13 modules
+webpack 5.97.1 compiled successfully in 234 ms
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.77 MiB
+  asset bundle.js 3.76 MiB [emitted] (name: main) 1 related asset
+  asset main.6534e4f10ccd0c5d0fb9.hot-update.js 10.3 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.6534e4f10ccd0c5d0fb9.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.77 MiB (3.52 MiB) = bundle.js 3.76 MiB main.6534e4f10ccd0c5d0fb9.hot-update.js 10.3 KiB 2 auxiliary assets
+cached modules 3.39 MiB [cached] 744 modules
+runtime modules 27.5 KiB 13 modules
+./src/App.tsx 6.08 KiB [built] [code generated]
+webpack 5.97.1 compiled successfully in 212 ms
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.77 MiB
+  asset bundle.js 3.76 MiB [emitted] (name: main) 1 related asset
+  asset main.71936745fd0d9ac04aab.hot-update.js 10.3 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.71936745fd0d9ac04aab.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.77 MiB (3.52 MiB) = bundle.js 3.76 MiB main.71936745fd0d9ac04aab.hot-update.js 10.3 KiB 2 auxiliary assets
+cached modules 3.39 MiB [cached] 744 modules
+runtime modules 27.5 KiB 13 modules
+./src/App.tsx 6.11 KiB [built] [code generated]
+webpack 5.97.1 compiled successfully in 166 ms
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.73 MiB
+  asset bundle.js 3.73 MiB [emitted] (name: main) 1 related asset
+  asset main.04570734cb71cb4ec706.hot-update.js 1.66 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.04570734cb71cb4ec706.hot-update.json 75 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.73 MiB (3.48 MiB) = bundle.js 3.73 MiB main.04570734cb71cb4ec706.hot-update.js 1.66 KiB 2 auxiliary assets
+cached modules 3.37 MiB [cached] 743 modules
+runtime modules 27.5 KiB 13 modules
+./index.web.js 350 bytes [built] [code generated]
+webpack 5.97.1 compiled successfully in 153 ms
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.74 MiB
+  asset bundle.js 3.73 MiB [emitted] (name: main) 1 related asset
+  asset main.6768e988d4488eacb49f.hot-update.js 10.7 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.6768e988d4488eacb49f.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.74 MiB (3.49 MiB) = bundle.js 3.73 MiB main.6768e988d4488eacb49f.hot-update.js 10.7 KiB 2 auxiliary assets
+cached modules 3.36 MiB [cached] 743 modules
+runtime modules 27.5 KiB 13 modules
+./src/App.tsx 6.27 KiB [built] [code generated]
+webpack 5.97.1 compiled successfully in 174 ms
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.74 MiB
+  asset bundle.js 3.73 MiB [emitted] (name: main) 1 related asset
+  asset main.a2ecb723309178844118.hot-update.js 10.7 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.a2ecb723309178844118.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.74 MiB (3.49 MiB) = bundle.js 3.73 MiB main.a2ecb723309178844118.hot-update.js 10.7 KiB 2 auxiliary assets
+cached modules 3.36 MiB [cached] 743 modules
+runtime modules 27.5 KiB 13 modules
+./src/App.tsx 6.3 KiB [built] [code generated]
+webpack 5.97.1 compiled successfully in 161 ms
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.74 MiB
+  asset bundle.js 3.73 MiB [emitted] (name: main) 1 related asset
+  asset main.d2cc7cee93e328c04ebb.hot-update.js 10.8 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.d2cc7cee93e328c04ebb.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.74 MiB (3.49 MiB) = bundle.js 3.73 MiB main.d2cc7cee93e328c04ebb.hot-update.js 10.8 KiB 2 auxiliary assets
+cached modules 3.36 MiB [cached] 743 modules
+runtime modules 27.5 KiB 13 modules
+./src/App.tsx 6.33 KiB [built] [code generated]
+webpack 5.97.1 compiled successfully in 189 ms
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-methods since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-methods", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+Though the "loose" option was set to "false" in your @babel/preset-env config, it will not be used for @babel/plugin-transform-private-property-in-object since the "loose" mode option was set to "true" for @babel/plugin-transform-class-properties.
+The "loose" option must be the same for @babel/plugin-transform-class-properties, @babel/plugin-transform-private-methods and @babel/plugin-transform-private-property-in-object (when they are enabled): you can silence this warning by explicitly adding
+	["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+to the "plugins" section of your Babel config.
+
+If you already set the same 'loose' mode for these plugins in your config, it's possible that they are enabled multiple times with different options.
+You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+	npx cross-env BABEL_SHOW_CONFIG_FOR=/home/mlasala/AndroidStudioProjects/mobile/src/App.tsx <your build command>
+See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+assets by status 754 bytes [cached] 1 asset
+assets by path *.js 3.74 MiB
+  asset bundle.js 3.73 MiB [emitted] (name: main) 1 related asset
+  asset main.3140fba27f100fa616eb.hot-update.js 10.5 KiB [emitted] [immutable] [hmr] (name: main) 1 related asset
+asset main.3140fba27f100fa616eb.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 3.74 MiB (3.49 MiB) = bundle.js 3.73 MiB main.3140fba27f100fa616eb.hot-update.js 10.5 KiB 2 auxiliary assets
+cached modules 3.36 MiB [cached] 743 modules
+runtime modules 27.5 KiB 13 modules
+./src/App.tsx 6.1 KiB [built] [code generated]
+webpack 5.97.1 compiled successfully in 174 ms
