@@ -26,6 +26,7 @@ export interface MessageRawData {
 
 export function onMessageReceived(channelID : DeviceIdentifier, data : MessageRawData) {
     pendingInboundMessages.push({channelID, data})
+    attemptToProcessReceivedMessages()
 }
 
 export function connectExistingChatChannel(channelId: DeviceIdentifier) {

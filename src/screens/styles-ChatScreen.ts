@@ -4,6 +4,10 @@ import { rem, em } from '../util/style'
 const max = Math.max
 
 const styles = StyleSheet.create({
+    headerLabel: {
+        fontSize: 18,
+        fontWeight: '500',
+    },
     chatScreen: {
         backgroundColor: '#002133',
         height: '100%',

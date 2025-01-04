@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useLayoutEffect } from 'react';
+import React, { createContext, forwardRef, memo, Ref, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, FlatList, Text, Animated, Platform } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
-import { allChatChannelsContentData, ChatMessageData, ChatMessageStatus, loadChannelContentFromStorage, onChannelContentModified } from '../ChatData';
+import { allChatChannelsContentData, ChatChannelContentData, ChatMessageData, ChatMessageStatus, loadChannelContentFromStorage, onChannelContentModified } from '../ChatData';
 import ChatChannelElipsisMenu from '../components/ChatChannelElipsisMenu';
 import { toTimeString } from '../util/date';
 import { attemptToProcessReceivedMessages, attemptToSendQueuedMessages, enqueueOutboundMessage, isMessagePending, MessageRawData } from '../networking/ChatNetworking';
@@ -10,12 +10,29 @@ import styles from './styles-ChatScreen'
 
 import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
 import ArrayDictionary from '../util/ArrayDictionary';
-import Toast from 'react-native-toast-message';
 import { checkPeerConnectionStatus, SocketStatus } from '../networking/P2PNetworking';
-import { displayNotification } from '../util/Notifications';
 import { enqueuePushNotification } from '../foreground-service';
+import { Pressable } from 'react-native-gesture-handler';
+import { DrawerHeaderProps } from '@react-navigation/drawer';
 
-function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData & { onLayout: () => void }) {
+import Clipboard from '@react-native-clipboard/clipboard';
+import { ChatScreenHeader } from '../components/ChatScreenHeader';
+import Toast from 'react-native-toast-message';
+
+const LONG_PRESS_MIN_MS = 250
+
+interface ChatBubbleProps {
+    msgData: ChatMessageData
+    onLayout: () => void,
+    onSelectedChanged: (id: string, selected: boolean) => void,
+    allowQuickSelect: () => boolean
+}
+
+function ChatBubble({ msgData, onLayout, onSelectedChanged, allowQuickSelect }: ChatBubbleProps) {
+    const { id, contentStr, status, timeSent } = msgData
+
+    const [selected, setSelected] = useState(false)
+
     /**Does the message belong to the local host? */
     const local = status != ChatMessageStatus.ReceivedFromRemoteHost
     const showStateMessage = true
@@ -34,6 +51,20 @@ function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData 
         stateMessageIsError = true
     }
 
+    function toggleSelected() {
+        console.log("toggleSelected")
+        const newVal = !selected
+        setSelected(newVal)
+        onSelectedChanged(id, newVal)
+    }
+
+    const chatBubbleViewStyle = {
+        ...styles.chatBubbleCommon,
+        ...(local ? styles.chatBubbleRight : styles.chatBubbleLeft),
+        backgroundColor: selected ? 'darkblue' : '#6495ED',
+        borderColor: selected ? 'white' : 'black'
+    }
+
     return (
         <React.Fragment>
             {showStateMessage &&
@@ -42,19 +73,23 @@ function ChatBubble({ contentStr, status, onLayout, timeSent }: ChatMessageData 
                     color: stateMessageIsError ? 'red' : 'gray',
                     marginHorizontal: 5,
                     marginVertical: 0,
-                    fontSize: 12
+                    fontSize: 12,
                 }}>
                     {stateMessage}
                 </Text>
             }
-            <View style={{
-                ...styles.chatBubbleCommon,
-                ...(local ? styles.chatBubbleRight : styles.chatBubbleLeft)
-            }}
+            <Pressable
+                delayLongPress={LONG_PRESS_MIN_MS}
+                onLongPress={toggleSelected}
+                onPress={() => {
+                    if (allowQuickSelect()) {
+                        toggleSelected()
+                    }
+                }}
+                style={chatBubbleViewStyle}
                 onLayout={onLayout}>
                 <Text style={styles.chatBubbleText}>{contentStr}</Text>
-            </View >
-
+            </Pressable>
         </React.Fragment >
     )
 }
@@ -78,6 +113,31 @@ function ChatBubbleInvisible({ contentStr, viewRef }: { contentStr: string, view
     )
 }
 
+
+interface ChatBubblesListProps {
+    messages: ChatMessageData[],
+    latestMessageUpdateTimestamp: number,
+    onChatBubbleLayout: () => void,
+    onChatBubbleSelectedChanged: (msgId: string, selected: boolean) => void,
+    allowQuickSelect: () => boolean,
+}
+
+const ChatBubblesList = memo(function ({ messages, latestMessageUpdateTimestamp, onChatBubbleLayout, onChatBubbleSelectedChanged, allowQuickSelect }: ChatBubblesListProps) {
+    return <FlatList
+        data={messages}
+        renderItem={({ item }) => <ChatBubble
+            msgData={item}
+            onLayout={onChatBubbleLayout}
+            onSelectedChanged={onChatBubbleSelectedChanged}
+            allowQuickSelect={allowQuickSelect} />}
+        keyExtractor={item => item.id}
+        inverted={true}
+    />
+}, (prevProps, nextProps) => {
+    //Ignore all props except for latestMessageId when deciding whether to rerender
+    return prevProps.latestMessageUpdateTimestamp == nextProps.latestMessageUpdateTimestamp
+})
+
 interface ChatScreenNetworkingCallbacks {
     id: DeviceIdentifier,
     onMessageReceived: (data: MessageRawData) => void,
@@ -86,6 +146,7 @@ interface ChatScreenNetworkingCallbacks {
     onDisconnected: () => void,
     onConnectionStateChanged: (newStatus: SocketStatus) => void
 }
+
 export const chatScreenNetworkCallbacks = new ArrayDictionary<DeviceIdentifier, ChatScreenNetworkingCallbacks>(KeyFunctions_DeviceIdentifier)
 //TODO: Decide how to set 'route' var type
 function ChatScreen({ navigation, route }: Props): React.JSX.Element {
@@ -95,6 +156,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
     const [inputText, setInputText] = React.useState('')
     const [connectionStatus, setConnectionStatus] = React.useState(SocketStatus.Disconnected)
     const [isElipsisMenuOpen, setIsElipsisMenuOpen] = React.useState(false)
+    const [numSelected, setNumSelected] = useState(0)
 
     //"Incoming Message" states
     const [waitingForIncomingMessageAnimToFinish, setWaitingForIncomingMessageAnimToFinish] = React.useState(false)
@@ -104,13 +166,18 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
     //Util states
     const [toggleToUpdate, setToggleToUpdate] = React.useState(false)
+    const [latestMessageUpdateTimestamp, setLatestMessageUpdateTimestamp] = React.useState(0)
 
     //Refs
     const scrollOffset = React.useRef(new Animated.Value(0)).current;
-    const flatListRef = React.useRef<FlatList>(null)
     const invisibleChatBubbleRef = React.useRef<View>(null)
     const menuButtonRef = React.useRef<View>(null)
     const menuPosition = React.useRef({ x: 0, y: 0 })
+    const numSelectedRef = useRef(0)
+    const setNumSelectedRef = useRef(null)
+
+    const channelContentData = React.useRef(undefined as ChatChannelContentData | undefined)
+    channelContentData.current = allChatChannelsContentData.get(channelId)
 
     function setElipsisMenuPosition(x: number, y: number) {
         console.log('setElipsisMenuPosition')
@@ -128,6 +195,13 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
     useLayoutEffect(() => {
         navigation.setOptions({
+            header: (headerProps: DrawerHeaderProps) => {
+                return <ChatScreenHeader
+                    setNumSelectedRef={setNumSelectedRef}
+                    copySelectedMessagesToClipboard={copySelectedMessagesToClipboard}
+                    channelId={channelId}
+                    navigation={navigation} />
+            },
             headerRight: () => {
                 return <View onLayout={(event) => {
                     menuButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -190,6 +264,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                 console.log(`Phony already generated`)
                 if (channelContentData.messages.length > 0) console.log(`Last message: ${channelContentData.messages[0].contentStr}`);
             }
+            setLatestMessageUpdateTimestamp(Date.now())
             forceRerender();
         })
     }, [])
@@ -211,7 +286,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
     //TODO: Refactor so only the invisible chat bubble rerenders
     useEffect(() => {
-        if(!allChatChannelsContentData.containsKey(channelId)) return; //Channel contents are not yet loaded
+        if (!allChatChannelsContentData.containsKey(channelId)) return; //Channel contents are not yet loaded
 
         console.log(`Check pre-measure queue. length=${incomingMessageQueue_premeasurement.length}`)
         if (incomingMessageQueue_premeasurement.length > 0) {
@@ -261,6 +336,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             const messageData = incomingMessageQueue_postmeasurement[0].messageData
 
             allChatChannelsContentData.get(channelId)!.messages.unshift(messageData)
+            setLatestMessageUpdateTimestamp(Date.now())
             onChannelContentModified(channelId)
 
             //Remove the message from the incoming queue
@@ -274,8 +350,8 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
     })
 
     useEffect(() => {
-        channelContentData?.messages.forEach(msgData => {
-            if(msgData.status == ChatMessageStatus.PendingSend && !isMessagePending(msgData.id)) {
+        channelContentData.current?.messages.forEach(msgData => {
+            if (msgData.status == ChatMessageStatus.PendingSend && !isMessagePending(msgData.id)) {
                 msgData.status = ChatMessageStatus.NotSent
             }
         });
@@ -285,6 +361,30 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
     function forceRerender() {
         setToggleToUpdate(!toggleToUpdate)
+    }
+
+    function copySelectedMessagesToClipboard() {
+        const messagesData: ChatMessageData[] = []
+        selectedMessages.current.forEach(msgId => {
+            const msgData = channelContentData.current?.messages.find(data => data.id == msgId)
+            if (msgData) messagesData.push(msgData)
+        })
+        messagesData.sort((a, b) => a.timeSent - b.timeSent)
+
+        let str = ""
+        for (let i = 0; i < messagesData.length; i++) {
+            str += messagesData[i].contentStr
+            if (i < messagesData.length - 1) str += '\n'
+        }
+        Clipboard.setString(str)
+
+        if(Platform.OS == "web") {
+            Toast.show({
+                type: 'info',
+                text1: "Copied to clipboard.",
+                visibilityTime: 1000
+            })
+        }
     }
 
     function sendMessage(message: string) {
@@ -333,8 +433,10 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         else {
             console.log("Failed to find message")
         }
+        onChannelContentModified(channelId)
 
         forceRerender()
+        setLatestMessageUpdateTimestamp(Date.now())
     }
 
     function onConnected() {
@@ -352,7 +454,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
      * Called whenever a new chat bubble is drawn to screen. Checks whether an there is an animation to start, and starts it if needed.
      */
     function onChatBubbleLayout() {
-        console.log(`onChatBubbleLayout (${mostRecentChatHeight})`)
+        //console.log(`onChatBubbleLayout (${mostRecentChatHeight})`)
         if (mostRecentChatHeight > 0) {
             scrollOffset.setValue(mostRecentChatHeight) //TODO: Plus margin?
             Animated.sequence([
@@ -374,19 +476,35 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         setWaitingForIncomingMessageAnimToFinish(false)
     }
 
-    console.log(`Rerender. menuPosition=${menuPosition.current.x},${menuPosition.current.y}`)
+    const selectedMessages = useRef(new Set<string>())
+    function onChatBubbleSelectedChanged(msgId: string, selected: boolean) {
+        console.log("onChatBubbleSelectedChanged", msgId, selected)
+        if (selected) {
+            selectedMessages.current.add(msgId)
+        }
+        else {
+            selectedMessages.current.delete(msgId)
+        }
 
-    const channelContentData = allChatChannelsContentData.get(channelId)
+        numSelectedRef.current = selectedMessages.current.size
+        if(setNumSelectedRef.current) {
+            const setter = setNumSelectedRef.current as React.Dispatch<React.SetStateAction<number>>
+            setter(numSelectedRef.current)
+        }
+    }
+
+
+    console.log(`Rerender. menuPosition=${menuPosition.current.x},${menuPosition.current.y}`, "selectedMessages:", selectedMessages.current.size)
     return (
         <View style={styles.chatScreen}>
-            {channelContentData &&
+            {channelContentData.current &&
                 <Animated.View style={{ transform: [{ translateY: scrollOffset }] }}>
-                    <FlatList
-                        data={channelContentData.messages}
-                        renderItem={({ item }) => <ChatBubble {...item} onLayout={onChatBubbleLayout} />}
-                        keyExtractor={item => item.id}
-                        inverted={true}
-                        ref={flatListRef}
+                    <ChatBubblesList
+                        messages={channelContentData.current?.messages}
+                        latestMessageUpdateTimestamp={latestMessageUpdateTimestamp}
+                        onChatBubbleLayout={onChatBubbleLayout}
+                        onChatBubbleSelectedChanged={onChatBubbleSelectedChanged}
+                        allowQuickSelect={() => numSelectedRef.current > 0}
                     />
                 </Animated.View>}
             {connectionStatus != SocketStatus.Connected &&
@@ -403,7 +521,9 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                         onChangeText={text => setInputText(text)}
                         onSubmitEditing={() => sendMessage(inputText)}
                         style={styles.textInput}
+                        textColor='white'
                         dense
+                        multiline
                     />
                     <IconButton
                         icon="send"
