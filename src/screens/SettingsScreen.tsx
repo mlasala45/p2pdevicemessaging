@@ -27,6 +27,7 @@ import { connectToSignalingServer, currentSignalServerUsername, SocketStatus, up
 import storage from '../Storage';
 import { deleteAllChannels as deleteAllChatChannels } from '../ChatData';
 import Toast from 'react-native-toast-message';
+import { registerEventHandler } from '../util/Events';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -73,13 +74,20 @@ function SettingsScreen(): React.JSX.Element {
     })
   }, [])
 
+  useEffect(() => {
+    registerEventHandler(
+      "onSignalSocketStatusChanged",
+      "settingsScreen",
+      onSignalSocketStatusChanged)
+  })
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     padding: 5
   };
 
   function onClick_reconnectToSignalServer() {
-    connectToSignalingServer(signalServerAddress, username, onSignalSocketStatusChanged)
+    connectToSignalingServer(signalServerAddress, username)
   }
 
   function onClick_updateUsername() {
@@ -104,9 +112,9 @@ function SettingsScreen(): React.JSX.Element {
     })
   }
 
-  function onSignalSocketStatusChanged(status: SocketStatus) {
-    setSignalConnectionStatus(status)
-    switch (status) {
+  function onSignalSocketStatusChanged({ newStatus }: { newStatus: SocketStatus }) {
+    setSignalConnectionStatus(newStatus)
+    switch (newStatus) {
       case SocketStatus.Connected:
         setConnectionStatusMessage({
           message: `Connected as '${currentSignalServerUsername}'`,

@@ -10,6 +10,7 @@ import { chatScreenNetworkCallbacks } from '../screens/ChatScreen';
 import RTCDataChannel from 'react-native-webrtc/lib/typescript/RTCDataChannel';
 import { RTCErrorEvent } from 'react-native-webrtc';
 import { acknowledgeMessageReceipt, onMessageReceived } from './ChatNetworking';
+import { raiseEvent } from '../util/Events';
 
 export interface PublicNetworkAddress {
   ipv4: string,
@@ -290,7 +291,7 @@ function composite(address: string, username: string) {
 
 let signalingServerSocket: Socket
 export let currentSignalServerUsername: string
-export function connectToSignalingServer(address: string, username: string, onSignalSocketStatusChanged: (status: SocketStatus) => void) {
+export function connectToSignalingServer(address: string, username: string) {
   if (signalingServerSocket) {
     signalingServerSocket.disconnect()
   }
@@ -305,11 +306,13 @@ export function connectToSignalingServer(address: string, username: string, onSi
 
   socket.on('connect', () => {
     currentSignalServerUsername = username
-    onSignalSocketStatusChanged(SocketStatus.Connected)
+    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Connected })
+    //onSignalSocketStatusChanged(SocketStatus.Connected)
   })
 
   socket.on("connect_error", (error) => {
-    onSignalSocketStatusChanged(SocketStatus.ConnectionError)
+    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.ConnectionError })
+    //onSignalSocketStatusChanged(SocketStatus.ConnectionError)
     if (socket.active) {
       console.log(error.message)
       // temporary failure, the socket will automatically try to reconnect
@@ -323,7 +326,8 @@ export function connectToSignalingServer(address: string, username: string, onSi
   });
 
   socket.on('disconnect', () => {
-    onSignalSocketStatusChanged(SocketStatus.Disconnected)
+    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Disconnected })
+    //onSignalSocketStatusChanged(SocketStatus.Disconnected)
   })
 
   //Handshake Management Events
@@ -390,7 +394,9 @@ export function connectToSignalingServer(address: string, username: string, onSi
       visibilityTime: 3000
     })
     currentSignalServerUsername = username
-    onSignalSocketStatusChanged(SocketStatus.Connected)
+    
+    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Connected })
+    //onSignalSocketStatusChanged(SocketStatus.Connected)
   })
 
   socket.on('err-username-reserved', (username: string) => {
@@ -402,7 +408,8 @@ export function connectToSignalingServer(address: string, username: string, onSi
   })
 
   socket.connect()
-  onSignalSocketStatusChanged(SocketStatus.Connecting)
+  raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Connected })
+  //onSignalSocketStatusChanged(SocketStatus.Connecting)
   signalingServerSocket = socket
 }
 
