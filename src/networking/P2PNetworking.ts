@@ -12,6 +12,7 @@ import { RTCErrorEvent } from 'react-native-webrtc';
 import { acknowledgeMessageReceipt, onMessageReceived } from './ChatNetworking';
 import { raiseEvent } from '../util/Events';
 import { Events } from '../events';
+import storage from '../Storage';
 
 export interface PublicNetworkAddress {
   ipv4: string,
@@ -290,6 +291,30 @@ function composite(address: string, username: string) {
   return `${username}@${address}`
 }
 
+export let startup_signalServerAddress: string
+export let startup_username: string
+export function startup_connectToSignalingServer() {
+  const p0 = storage.load({
+    key: 'signalServerAddress'
+  }).then(data => {
+    if (typeof data != 'string') data = ''
+    startup_signalServerAddress = data
+  })
+
+  const p1 = storage.load({
+    key: 'username'
+  }).then(data => {
+    if (typeof data != 'string') data = ''
+    if (data == '') data = crypto.randomUUID().substring(0, 8);
+    startup_username = data
+  })
+
+  Promise.all([p0,p1]).then(()=>{
+    raiseEvent(Events.onSignalServerAddressLoaded)
+    connectToSignalingServer(startup_signalServerAddress, startup_username)
+  })
+}
+
 let signalingServerSocket: Socket
 export let currentSignalServerUsername: string
 export function connectToSignalingServer(address: string, username: string) {
@@ -395,7 +420,7 @@ export function connectToSignalingServer(address: string, username: string) {
       visibilityTime: 3000
     })
     currentSignalServerUsername = username
-    
+
     raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.Connected })
     //onSignalSocketStatusChanged(SocketStatus.Connected)
   })

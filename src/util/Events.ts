@@ -28,7 +28,7 @@ export function deregisterEventHandler(eventKey: string | number, handlerKey: st
 }
 
 /**Calls each handler registered to this event key. The data parameter will be passed to the event handler. */
-export function raiseEvent(eventKey: string | number, data: any) {
+export function raiseEvent(eventKey: string | number, data: any = {}) {
     eventKey = String(eventKey)
     if (allEventHandlers[eventKey]) {
         Object.values(allEventHandlers[eventKey]).forEach(handler => {

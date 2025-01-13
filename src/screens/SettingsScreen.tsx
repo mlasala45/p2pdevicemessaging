@@ -23,7 +23,7 @@ import {
   TextInput,
 } from 'react-native-paper'
 
-import { connectToSignalingServer, currentSignalServerUsername, SocketStatus, updateSignalServerUsername } from '../networking/P2PNetworking';
+import { connectToSignalingServer, currentSignalServerUsername, SocketStatus, startup_signalServerAddress, startup_username, updateSignalServerUsername } from '../networking/P2PNetworking';
 import storage from '../Storage';
 import { deleteAllChannels as deleteAllChatChannels } from '../ChatData';
 import Toast from 'react-native-toast-message';
@@ -51,29 +51,19 @@ interface ConnectionStatusMessage {
 function SettingsScreen(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const [signalServerAddress, setSignalServerAddress] = useState('')
-  const [username, setUsername] = useState('')
+  const [signalServerAddress, setSignalServerAddress] = useState(startup_signalServerAddress)
+  const [username, setUsername] = useState(startup_username)
   const [signalConnectionStatus, setSignalConnectionStatus] = useState(SocketStatus.Disconnected)
   const [connectionStatusMessage, setConnectionStatusMessage] = useState({} as ConnectionStatusMessage)
 
   const [dialogOpen_deleteAll, setDialogOpen_deleteAll] = useState(false)
 
   useEffect(() => {
-    storage.load({
-      key: 'signalServerAddress'
-    }).then(data => {
-      if (typeof data != 'string') data = ''
-      setSignalServerAddress(data)
+    registerEventHandler(Events.onSignalServerAddressLoaded, 'settingsScreen', () => {
+      setSignalServerAddress(startup_signalServerAddress)
+      setUsername(startup_username)
     })
-
-    storage.load({
-      key: 'username'
-    }).then(data => {
-      if (typeof data != 'string') data = ''
-      if (data == '') data = crypto.randomUUID().substring(0, 8);
-      setUsername(data)
-    })
-  }, [])
+  })
 
   useEffect(() => {
     registerEventHandler(
