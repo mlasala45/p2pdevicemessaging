@@ -4,6 +4,8 @@ import { chatScreenNetworkCallbacks } from "../screens/ChatScreen";
 import storage from "../Storage";
 import { DeviceIdentifier } from "./DeviceIdentifier";
 import { allPeerConnections, checkPeerConnectionStatus } from "./P2PNetworking";
+import { registerEventHandler } from "../util/Events";
+import { EventData_onClearChatHistory, Events } from "../events";
 
 let pendingOutboundMessages = [] as PendingMessage[];
 let pendingInboundMessages : { channelID : DeviceIdentifier, data : MessageRawData }[] = []
@@ -107,6 +109,7 @@ export function attemptToProcessReceivedMessages() {
     pendingInboundMessages = newQueue
 }
 
+/**Saves changes to persistent storage. */
 function onPendingMessageQueueModified() {
     storage.save({
         key: 'pendingMessages',
@@ -155,3 +158,8 @@ export function clearPendingMessagesToHost(channelId: DeviceIdentifier) {
     pendingOutboundMessages = pendingOutboundMessages.filter(pendingMsg => pendingMsg.channelId != channelId)
     onPendingMessageQueueModified()
 }
+
+registerEventHandler(Events.onClearChatHistory, "chatNetworking", (e : EventData_onClearChatHistory) => {
+    pendingOutboundMessages = pendingOutboundMessages.filter(pendingMsg => pendingMsg.channelId != e.channelId)
+    onPendingMessageQueueModified()
+})

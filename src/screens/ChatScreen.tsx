@@ -19,7 +19,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { ChatScreenHeader } from '../components/ChatScreenHeader';
 import Toast from 'react-native-toast-message';
 import { registerEventHandler } from '../util/Events';
-import { Events } from '../events';
+import { EventData_onClearChatHistory, Events } from '../events';
 
 const LONG_PRESS_MIN_MS = 250
 
@@ -285,7 +285,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
         attemptToProcessReceivedMessages()
 
-        registerEventHandler(Events.onClearChatHistory, toString(channelId), (e: { channelId: DeviceIdentifier }) => {
+        registerEventHandler(Events.onClearChatHistory, toString(channelId), (e: EventData_onClearChatHistory) => {
             if (channelId == e.channelId) {
                 setLatestMessageUpdateTimestamp(Date.now())
             }
