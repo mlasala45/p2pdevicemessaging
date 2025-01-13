@@ -9,6 +9,8 @@ import { DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
 import Toast from 'react-native-toast-message';
 import { disconnectPeerConnection, checkPeerConnectionStatus, SocketStatus } from '../networking/P2PNetworking';
 import { connectExistingChatChannel } from '../networking/ChatNetworking';
+import { raiseEvent } from '../util/Events';
+import { Events } from '../events';
 
 function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConnectionStatus_parent }: Props) {
     const appLevelActions = useContext(AppLevelActions)
@@ -46,12 +48,7 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
             onChannelContentModified(channelId)
             forceRerenderApp()
 
-            //If we currently have that channel open, we need to rerender
-            const channelName = toString(channelId) //TODO
-            if (getCurrentRouteKey(navigation) == channelName) {
-                // @ts-ignore
-                navigation.navigate(channelName, { forceRerender: new Date().toISOString() });
-            }
+            raiseEvent(Events.onClearChatHistory, { channelId })
         }
     }
 

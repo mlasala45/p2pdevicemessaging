@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
-    "mobile": "react-native start --port 8082",
+    "mobile": "react-native start --port 8081",
     "web": "PUBLIC_URL= NODE_ENV=development webpack serve 2>&1 | tee ./logs/webpack-dev-server.log",
     "build:web": "PUBLIC_URL= NODE_ENV=production webpack",
     "test": "jest"

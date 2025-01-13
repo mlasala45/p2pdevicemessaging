@@ -11,14 +11,16 @@ type EventHandlersByKeyRecord = Record<string, EventHandler>
  * @param handler The handler that will be executed when the event is raised.
  * @returns The same handler that was passed in.
  */
-export function registerEventHandler(eventKey: string, handlerKey: string, handler: EventHandler): EventHandler {
+export function registerEventHandler(eventKey: string | number, handlerKey: string, handler: EventHandler): EventHandler {
+    eventKey = String(eventKey)
     if (!allEventHandlers[eventKey]) allEventHandlers[eventKey] = {}
     const thisEventAllHandlers = allEventHandlers[eventKey]
     thisEventAllHandlers[handlerKey] = handler
     return handler
 }
 
-export function deregisterEventHandler(eventKey: string, handlerKey: string) {
+export function deregisterEventHandler(eventKey: string | number, handlerKey: string) {
+    eventKey = String(eventKey)
     const thisEventAllHandlers = allEventHandlers[eventKey]
     if (thisEventAllHandlers) {
         delete thisEventAllHandlers[handlerKey]
@@ -26,7 +28,8 @@ export function deregisterEventHandler(eventKey: string, handlerKey: string) {
 }
 
 /**Calls each handler registered to this event key. The data parameter will be passed to the event handler. */
-export function raiseEvent(eventKey: string, data: any) {
+export function raiseEvent(eventKey: string | number, data: any) {
+    eventKey = String(eventKey)
     if (allEventHandlers[eventKey]) {
         Object.values(allEventHandlers[eventKey]).forEach(handler => {
             try {

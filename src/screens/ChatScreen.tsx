@@ -18,6 +18,8 @@ import { DrawerHeaderProps } from '@react-navigation/drawer';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { ChatScreenHeader } from '../components/ChatScreenHeader';
 import Toast from 'react-native-toast-message';
+import { registerEventHandler } from '../util/Events';
+import { Events } from '../events';
 
 const LONG_PRESS_MIN_MS = 250
 
@@ -282,6 +284,12 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         setConnectionStatus(checkPeerConnectionStatus(channelId))
 
         attemptToProcessReceivedMessages()
+
+        registerEventHandler(Events.onClearChatHistory, toString(channelId), (e: { channelId: DeviceIdentifier }) => {
+            if (channelId == e.channelId) {
+                setLatestMessageUpdateTimestamp(Date.now())
+            }
+        })
     })
 
     //TODO: Refactor so only the invisible chat bubble rerenders
@@ -376,18 +384,22 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             str += messagesData[i].contentStr
             if (i < messagesData.length - 1) str += '\n'
         }
-        Clipboard.setString(str)
 
-        if(Platform.OS == "web") {
+        if (Platform.OS == "web") {
+            navigator.clipboard.writeText(str)
             Toast.show({
                 type: 'info',
                 text1: "Copied to clipboard.",
                 visibilityTime: 1000
             })
         }
+        else {
+            Clipboard.setString(str)
+        }
     }
 
     function sendMessage(message: string) {
+        message = message.trimEnd()
         console.log("sendMessage", message)
         setInputText('') //TODO: Clearing this late Could result in multiple sends from spamming the button. Rewrite to prevent.
         const msgData = {
@@ -487,7 +499,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         }
 
         numSelectedRef.current = selectedMessages.current.size
-        if(setNumSelectedRef.current) {
+        if (setNumSelectedRef.current) {
             const setter = setNumSelectedRef.current as React.Dispatch<React.SetStateAction<number>>
             setter(numSelectedRef.current)
         }

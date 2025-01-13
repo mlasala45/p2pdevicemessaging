@@ -11,6 +11,7 @@ import RTCDataChannel from 'react-native-webrtc/lib/typescript/RTCDataChannel';
 import { RTCErrorEvent } from 'react-native-webrtc';
 import { acknowledgeMessageReceipt, onMessageReceived } from './ChatNetworking';
 import { raiseEvent } from '../util/Events';
+import { Events } from '../events';
 
 export interface PublicNetworkAddress {
   ipv4: string,
@@ -306,12 +307,12 @@ export function connectToSignalingServer(address: string, username: string) {
 
   socket.on('connect', () => {
     currentSignalServerUsername = username
-    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Connected })
+    raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.Connected })
     //onSignalSocketStatusChanged(SocketStatus.Connected)
   })
 
   socket.on("connect_error", (error) => {
-    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.ConnectionError })
+    raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.ConnectionError })
     //onSignalSocketStatusChanged(SocketStatus.ConnectionError)
     if (socket.active) {
       console.log(error.message)
@@ -326,7 +327,7 @@ export function connectToSignalingServer(address: string, username: string) {
   });
 
   socket.on('disconnect', () => {
-    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Disconnected })
+    raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.Disconnected })
     //onSignalSocketStatusChanged(SocketStatus.Disconnected)
   })
 
@@ -395,7 +396,7 @@ export function connectToSignalingServer(address: string, username: string) {
     })
     currentSignalServerUsername = username
     
-    raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Connected })
+    raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.Connected })
     //onSignalSocketStatusChanged(SocketStatus.Connected)
   })
 
@@ -408,7 +409,7 @@ export function connectToSignalingServer(address: string, username: string) {
   })
 
   socket.connect()
-  raiseEvent("onSignalSocketStatusChanged", { newStatus: SocketStatus.Connected })
+  raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.Connected })
   //onSignalSocketStatusChanged(SocketStatus.Connecting)
   signalingServerSocket = socket
 }

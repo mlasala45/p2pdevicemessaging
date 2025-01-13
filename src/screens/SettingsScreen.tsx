@@ -28,6 +28,7 @@ import storage from '../Storage';
 import { deleteAllChannels as deleteAllChatChannels } from '../ChatData';
 import Toast from 'react-native-toast-message';
 import { registerEventHandler } from '../util/Events';
+import { Events } from '../events';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -76,7 +77,7 @@ function SettingsScreen(): React.JSX.Element {
 
   useEffect(() => {
     registerEventHandler(
-      "onSignalSocketStatusChanged",
+      Events.onSignalSocketStatusChanged,
       "settingsScreen",
       onSignalSocketStatusChanged)
   })

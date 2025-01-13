@@ -65,6 +65,7 @@ export function onChannelDetailsModified(channelId: DeviceIdentifier) {
     })
 }
 
+/**Saves the changes to persistent storage. */
 export function onChannelContentModified(channelId: DeviceIdentifier) {
     return new Promise(() => {
         storage.save({
