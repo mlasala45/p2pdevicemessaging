@@ -1,4 +1,4 @@
-package com.mobile
+package com.p2pdevicemessaging
 
 import android.app.Application
 import com.facebook.react.PackageList
