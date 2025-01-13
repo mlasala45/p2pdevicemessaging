@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal, PaperProvider, Text, TextInput, ActivityIndicator, Icon } from 'react-native-paper';
 import { decodeToIpv4, isCodeValid } from '../util/ipaddrcode';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -252,6 +252,10 @@ const AddDeviceDialog = ({ visible, setVisible }: AddDeviceDialogProps) => {
         </React.Fragment>)
     }
 
+    let dialogStyle = {}
+    if (Platform.OS == "web") {
+        dialogStyle = { alignSelf: 'center', maxWidth: 540, backgroundColor: 'white' }
+    }
     return (
         <Context_AddDeviceDialog.Provider value={{
             addressCode: {
@@ -264,21 +268,25 @@ const AddDeviceDialog = ({ visible, setVisible }: AddDeviceDialogProps) => {
             },
             currentRouteName
         }}>
-            <Dialog visible={visible} onDismiss={onDismiss} style={{ alignSelf: 'center', minWidth: '30%', maxWidth: '30%', backgroundColor: 'white' }}>
+            <Dialog visible={visible} onDismiss={onDismiss} style={dialogStyle}>
                 <Dialog.Title>Send Connection Request</Dialog.Title>
                 {dialogStep == 0 &&
                     <Dialog.Content>
-                        <NavigationContainer onStateChange={(state) => {
-                            updateWindowTitle()
-                            if (state) setCurrentRouteName(state.routes[state.index].name)
-                        }}>
-                            <Tab.Navigator screenOptions={{
-                                sceneStyle: { backgroundColor: 'clear' }
+                        <View style={{minHeight:260}}>
+                            <NavigationContainer onStateChange={(state) => {
+                                updateWindowTitle()
+                                if (state) setCurrentRouteName(state.routes[state.index].name)
                             }}>
-                                <Tab.Screen name="By Address" component={Tab_ByAddress} />
-                                <Tab.Screen name="By Signal Server" component={Tab_BySignalServer} />
-                            </Tab.Navigator>
-                        </NavigationContainer>
+                                <Tab.Navigator screenOptions={{
+                                    sceneStyle: { backgroundColor: 'clear', minHeight: 200 }
+                                }}
+                                    style={{
+                                    }}>
+                                    <Tab.Screen name="By Address" component={Tab_ByAddress} />
+                                    <Tab.Screen name="By Signal Server" component={Tab_BySignalServer} />
+                                </Tab.Navigator>
+                            </NavigationContainer>
+                        </View>
                     </Dialog.Content>
                 }
                 {dialogStep == 1 &&

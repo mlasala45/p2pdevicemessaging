@@ -15,11 +15,11 @@ import { enqueuePushNotification } from '../foreground-service';
 import { Pressable } from 'react-native-gesture-handler';
 import { DrawerHeaderProps } from '@react-navigation/drawer';
 
-import Clipboard from '@react-native-clipboard/clipboard';
 import { ChatScreenHeader } from '../components/ChatScreenHeader';
 import Toast from 'react-native-toast-message';
 import { registerEventHandler } from '../util/Events';
 import { EventData_onClearChatHistory, Events } from '../events';
+import { Clipboard } from '../util/ClipBoard';
 
 const LONG_PRESS_MIN_MS = 250
 
@@ -385,17 +385,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             if (i < messagesData.length - 1) str += '\n'
         }
 
-        if (Platform.OS == "web") {
-            navigator.clipboard.writeText(str)
-            Toast.show({
-                type: 'info',
-                text1: "Copied to clipboard.",
-                visibilityTime: 1000
-            })
-        }
-        else {
-            Clipboard.setString(str)
-        }
+        Clipboard.setString(str)
     }
 
     function sendMessage(message: string) {

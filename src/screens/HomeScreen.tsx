@@ -15,6 +15,8 @@ import { NetworkInfo } from '../util/network-info';
 
 import { getPublicAddress } from '../networking/P2PNetworking';
 import { encodeIpv4 } from '../util/ipaddrcode'
+import { IconButton, TextInput } from 'react-native-paper';
+import { Clipboard } from '../util/ClipBoard';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -42,15 +44,16 @@ function Section({ children, title }: SectionProps): React.JSX.Element {
         ]}>
         {title}
       </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+      {children &&
+        <Text
+          style={[
+            styles.sectionDescription,
+            {
+              color: isDarkMode ? Colors.light : Colors.dark,
+            },
+          ]}>
+          {children}
+        </Text>}
     </View>
   );
 }
@@ -62,6 +65,10 @@ function HomeScreen(): React.JSX.Element {
   const [privateAddress, setPrivateAddress] = useState('')
   const publicAddressFound = publicAddress.ipv4 != ''
   const privateAddressFound = privateAddress != ''
+
+  const calculatorInvalidAddressMsg = 'INVALID'
+  const [calculatorIPAddressStr, setCalculatorIPAddressStr] = useState('')
+  const [calculatorAddressCode, setCalculatorAddressCode] = useState(calculatorInvalidAddressMsg)
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -78,11 +85,29 @@ function HomeScreen(): React.JSX.Element {
     }
 
     if (!privateAddressFound) {
-      NetworkInfo.getIPV4Address().then(ipv4Address => {
+      NetworkInfo.getIPV4Address().then((ipv4Address: string) => {
         setPrivateAddress(ipv4Address as string)
       });
     }
   })
+
+  function onChangeText_addressCodeCalculator(text: string) {
+    setCalculatorIPAddressStr(text)
+
+    try {
+      setCalculatorAddressCode(encodeIpv4(text))
+    }
+    catch (e) {
+      setCalculatorAddressCode(calculatorInvalidAddressMsg)
+    }
+  }
+
+  const calculatorAddressCodeValid = calculatorAddressCode != calculatorInvalidAddressMsg
+  function onPress_calculatorCopy() {
+    if(calculatorAddressCodeValid) {
+      Clipboard.setString(calculatorAddressCode)
+    }
+  }
 
   let publicAddressReadout, privateAddressReadout;
   if (publicAddressFound) {
@@ -128,6 +153,25 @@ function HomeScreen(): React.JSX.Element {
                 : "[Fetching address...]")
             }
           </Section>
+          <Section title="Address Code Generator" />
+          <View style={{ padding: 20 }}>
+            <TextInput
+              label="IPv4 Address"
+              value={calculatorIPAddressStr}
+              onChangeText={onChangeText_addressCodeCalculator}
+              style={{
+                marginBottom: 10,
+                maxWidth:300
+              }}
+            />
+            <View style={{flexDirection:'row', alignItems: 'center'}}>
+              <Text style={{ fontSize: 18, padding: 5, color: 'white', flex: 1 }}>
+                Code:
+                <Text style={{ fontWeight: 'bold' }}> {calculatorAddressCode}</Text>
+              </Text>
+              <IconButton icon='content-copy' size={20} onPress={onPress_calculatorCopy} disabled={!calculatorAddressCodeValid}></IconButton>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -147,6 +191,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
+    flexDirection: 'column'
   },
   highlight: {
     fontWeight: '700',
