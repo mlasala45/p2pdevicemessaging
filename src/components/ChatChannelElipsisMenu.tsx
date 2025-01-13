@@ -11,6 +11,7 @@ import { disconnectPeerConnection, checkPeerConnectionStatus, SocketStatus } fro
 import { connectExistingChatChannel } from '../networking/ChatNetworking';
 import { raiseEvent } from '../util/Events';
 import { Events } from '../events';
+import { StyleSheet } from 'react-native';
 
 function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConnectionStatus_parent }: Props) {
     const appLevelActions = useContext(AppLevelActions)
@@ -104,7 +105,7 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
                 <Menu.Item onPress={showDialog_delete} titleStyle={{ color: alertColor }} title="Delete Connection" />
             </Menu>
             <Portal>
-                <Dialog visible={dialogOpen_clear} onDismiss={hideDialog_clear}>
+                <Dialog visible={dialogOpen_clear} onDismiss={hideDialog_clear} style={styles.dialog}>
                     <Dialog.Title style={{ color: alertColor }}>Clear Chat History?</Dialog.Title>
                     <Dialog.Content>
                         <Text variant="bodyMedium">{`${messageHistorySizeRef.current} messages will be deleted. The other device will keep their copy of the conversation.`}</Text>
@@ -114,7 +115,7 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
                         <Button onPress={confirmDialog_clear}>Confirm</Button>
                     </Dialog.Actions>
                 </Dialog>
-                <Dialog visible={dialogOpen_delete} onDismiss={hideDialog_delete}>
+                <Dialog visible={dialogOpen_delete} onDismiss={hideDialog_delete} style={styles.dialog}>
                     <Dialog.Title style={{ color: alertColor }}>Delete Connection?</Dialog.Title>
                     <Dialog.Content>
                         <Text variant="bodyMedium">Your message history will be lost, and you will need to add the device again to send or receive messages. The other device will keep their copy of the chat history, and can request to reconnect.</Text>
@@ -128,6 +129,13 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
         </React.Fragment>
     )
 }
+
+const styles = StyleSheet.create({
+    dialog: {
+        maxWidth: 500,
+        alignSelf: 'center'
+    }
+})
 
 interface Props {
     visible: boolean,
