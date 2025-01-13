@@ -42,22 +42,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         marginBottom: 10,
-        marginTop: 10
+        marginTop: 10,
+        width: '100%',
+        alignItems: 'center',
+        paddingHorizontal: 10,
     },
     textInputContainer: {
         flexDirection: 'row',
         borderRadius: 50,
         backgroundColor: '#273746',
         alignSelf: 'flex-end',
-        justifyContent: 'flex-end',
-        width: '80%',
+        flex: 1,
+        height: 50
     },
     textInput: {
         backgroundColor: 'clear',
         marginEnd: 0,
         paddingTop: 5,
         paddingBottom: 5,
-        //left: 0
+        width: '100%'
     },
 })
 

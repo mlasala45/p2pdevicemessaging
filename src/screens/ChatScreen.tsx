@@ -293,7 +293,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         })
 
         registerEventHandler(Events.onPeerConnectionEstablished, eventHandlersKey, (e) => {
-            if(channelId == e.channelId) {
+            if (channelId == e.channelId) {
                 forceMessageListRerender()
             }
         })
@@ -535,16 +535,19 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                         onSubmitEditing={() => sendMessage(inputText)}
                         style={styles.textInput}
                         textColor='white'
+                        underlineColor="transparent"
+                        activeUnderlineColor='transparent'
+                        cursorColor='white'
                         dense
                         multiline
                     />
-                    <IconButton
-                        icon="send"
-                        iconColor={'#5dade2'}
-                        size={20}
-                        onPress={() => sendMessage(inputText)}
-                    />
                 </View>
+                <IconButton
+                    icon="send"
+                    iconColor={'#5dade2'}
+                    size={24}
+                    onPress={() => sendMessage(inputText)}
+                />
             </View>
             {/* Invisible chat bubble is used to measure the exact height of new chat bubbles before they are added to the screen. */}
             <ChatBubbleInvisible contentStr={incomingMessageQueue_premeasurement.length > 0 && incomingMessageQueue_premeasurement[0].contentStr || ''} viewRef={invisibleChatBubbleRef} />
