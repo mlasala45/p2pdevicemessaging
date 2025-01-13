@@ -18,7 +18,7 @@ import { DrawerHeaderProps } from '@react-navigation/drawer';
 import { ChatScreenHeader } from '../components/ChatScreenHeader';
 import Toast from 'react-native-toast-message';
 import { registerEventHandler } from '../util/Events';
-import { EventData_onClearChatHistory, Events } from '../events';
+import { EventData_channelId, Events } from '../events';
 import { Clipboard } from '../util/ClipBoard';
 
 const LONG_PRESS_MIN_MS = 250
@@ -285,12 +285,23 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
 
         attemptToProcessReceivedMessages()
 
-        registerEventHandler(Events.onClearChatHistory, toString(channelId), (e: EventData_onClearChatHistory) => {
+        const eventHandlersKey = toString(channelId)
+        registerEventHandler(Events.onClearChatHistory, eventHandlersKey, (e: EventData_channelId) => {
             if (channelId == e.channelId) {
-                setLatestMessageUpdateTimestamp(Date.now())
+                forceMessageListRerender()
+            }
+        })
+
+        registerEventHandler(Events.onPeerConnectionEstablished, eventHandlersKey, (e) => {
+            if(channelId == e.channelId) {
+                forceMessageListRerender()
             }
         })
     })
+
+    function forceMessageListRerender() {
+        setLatestMessageUpdateTimestamp(Date.now())
+    }
 
     //TODO: Refactor so only the invisible chat bubble rerenders
     useEffect(() => {

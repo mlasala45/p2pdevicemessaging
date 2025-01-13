@@ -14,6 +14,8 @@ import SettingsScreen from './screens/SettingsScreen';
 import Toast, { ErrorToast } from 'react-native-toast-message';
 import { attemptToSendQueuedMessages, loadPersistentNetworkData } from './networking/ChatNetworking';
 import { launchForegroundService } from './foreground-service';
+import { registerEventHandler } from './util/Events';
+import { EventData_channelId, Events } from './events';
 
 const Drawer = createDrawerNavigator();
 export const AppLevelActions = React.createContext({} as {
@@ -56,6 +58,12 @@ export default function App() {
       launchForegroundService()
     }
   }, [])
+
+  React.useEffect(() => {
+    registerEventHandler(Events.onPeerConnectionEstablished, 'app', (e: EventData_channelId) => {
+      forceRerenderApp()
+    })
+  })
 
   if (Platform.OS == "web") {
     React.useEffect(() => {

@@ -114,8 +114,7 @@ function onPeerConnectionEstablished(refs: P2PConnectionRefs, id: DeviceIdentifi
     //Chat channels are created upon successful peer connections that do not already have a channel.
     createNewChannel(id)
   }
-  chatScreenNetworkCallbacks.get(id)?.onConnected()
-  forceRerenderApp()
+  raiseEvent(Events.onPeerConnectionEstablished, { channelId: id })
 }
 
 /** UI updates are handled by onPeerConnectionStateChange. */
@@ -309,7 +308,7 @@ export function startup_connectToSignalingServer() {
     startup_username = data
   })
 
-  Promise.all([p0,p1]).then(()=>{
+  Promise.all([p0, p1]).then(() => {
     raiseEvent(Events.onSignalServerAddressLoaded)
     connectToSignalingServer(startup_signalServerAddress, startup_username)
   })

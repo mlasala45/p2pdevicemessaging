@@ -5,7 +5,7 @@ import storage from "../Storage";
 import { DeviceIdentifier } from "./DeviceIdentifier";
 import { allPeerConnections, checkPeerConnectionStatus } from "./P2PNetworking";
 import { registerEventHandler } from "../util/Events";
-import { EventData_onClearChatHistory, Events } from "../events";
+import { EventData_channelId, Events } from "../events";
 
 let pendingOutboundMessages = [] as PendingMessage[];
 let pendingInboundMessages : { channelID : DeviceIdentifier, data : MessageRawData }[] = []
@@ -159,7 +159,7 @@ export function clearPendingMessagesToHost(channelId: DeviceIdentifier) {
     onPendingMessageQueueModified()
 }
 
-registerEventHandler(Events.onClearChatHistory, "chatNetworking", (e : EventData_onClearChatHistory) => {
+registerEventHandler(Events.onClearChatHistory, "chatNetworking", (e : EventData_channelId) => {
     pendingOutboundMessages = pendingOutboundMessages.filter(pendingMsg => pendingMsg.channelId != e.channelId)
     onPendingMessageQueueModified()
 })
