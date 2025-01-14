@@ -1,7 +1,7 @@
 import React, { createContext, forwardRef, memo, Ref, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, FlatList, Text, Animated, Platform } from 'react-native';
 import { IconButton, TextInput } from 'react-native-paper';
-import { allChatChannelsContentData, ChatChannelContentData, ChatMessageData, ChatMessageStatus, loadChannelContentFromStorage, onChannelContentModified } from '../ChatData';
+import { allChatChannelsContentData, ChatChannelContentData, ChatMessageData, ChatMessageStatus, loadChannelContentFromStorage, onChannelContentModified, recalculateChannelAnnotations } from '../ChatData';
 import ChatChannelElipsisMenu from '../components/ChatChannelElipsisMenu';
 import { toTimeString } from '../util/date';
 import { attemptToProcessReceivedMessages, attemptToSendQueuedMessages, enqueueOutboundMessage, isMessagePending, MessageRawData } from '../networking/ChatNetworking';
@@ -10,7 +10,7 @@ import styles from './styles-ChatScreen'
 
 import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
 import ArrayDictionary from '../util/ArrayDictionary';
-import { checkPeerConnectionStatus, SocketStatus } from '../networking/P2PNetworking';
+import { checkPeerConnectionStatus, currentSignalServerUsername, SocketStatus } from '../networking/P2PNetworking';
 import { enqueuePushNotification } from '../foreground-service';
 import { Pressable } from 'react-native-gesture-handler';
 import { DrawerHeaderProps } from '@react-navigation/drawer';
@@ -60,22 +60,28 @@ function ChatBubble({ msgData, onLayout, onSelectedChanged, allowQuickSelect }: 
         onSelectedChanged(id, newVal)
     }
 
+    //On web, all chats are left-aligned, due to the wide layout
+    const messageShouldBeLeftAligned = !local || Platform.OS == 'web'
+    let chatBubbleAlignStyles = messageShouldBeLeftAligned ? styles.chatBubbleLeft : styles.chatBubbleRight
     const chatBubbleViewStyle = {
         ...styles.chatBubbleCommon,
-        ...(local ? styles.chatBubbleRight : styles.chatBubbleLeft),
+        ...chatBubbleAlignStyles,
         backgroundColor: selected ? 'darkblue' : '#6495ED',
         borderColor: selected ? 'white' : 'black'
     }
 
+    const textAlign = messageShouldBeLeftAligned ? 'left' : 'right'
+
+    //Components in the list are drawn bottom-to-top
     return (
         <React.Fragment>
             {showStateMessage &&
                 <Text style={{
-                    textAlign: local ? 'right' : 'left',
+                    textAlign,
                     color: stateMessageIsError ? 'red' : 'gray',
                     marginHorizontal: 5,
-                    marginVertical: 0,
                     fontSize: 12,
+                    marginBottom: 5
                 }}>
                     {stateMessage}
                 </Text>
@@ -92,6 +98,11 @@ function ChatBubble({ msgData, onLayout, onSelectedChanged, allowQuickSelect }: 
                 onLayout={onLayout}>
                 <Text style={styles.chatBubbleText}>{contentStr}</Text>
             </Pressable>
+            {msgData.annotations?.isFirstFromThisUserInBlock &&
+                <View style={{ ...chatBubbleAlignStyles }}>
+                    <Text style={{ color: 'white', fontWeight: 500, margin: 5 }}>{msgData.user}</Text>
+                </View>
+            }
         </React.Fragment >
     )
 }
@@ -134,6 +145,7 @@ const ChatBubblesList = memo(function ({ messages, latestMessageUpdateTimestamp,
             allowQuickSelect={allowQuickSelect} />}
         keyExtractor={item => item.id}
         inverted={true}
+        style={{ padding: 5 }}
     />
 }, (prevProps, nextProps) => {
     //Ignore all props except for latestMessageId when deciding whether to rerender
@@ -228,35 +240,41 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             const channelContentData = allChatChannelsContentData.get(channelId)!
             if (!channelContentData.phonyGenerated) {
                 console.log(`Phony not generated; generating.`);
+                const user = 'phony@localhost';
                 [{
                     id: '0',
                     contentStr: `Hi! This is the chat for ${channelId}!`,
                     status: ChatMessageStatus.ReceivedFromRemoteHost,
-                    timeSent: 0
+                    timeSent: 0,
+                    user
                 },
                 {
                     id: '1',
                     contentStr: `This is a second message!`,
                     status: ChatMessageStatus.ReceivedFromRemoteHost,
-                    timeSent: 1
+                    timeSent: 1,
+                    user
                 },
                 {
                     id: '2',
                     contentStr: `And this is a third!`,
                     status: ChatMessageStatus.Delivered,
-                    timeSent: 2
+                    timeSent: 2,
+                    user
                 },
                 {
                     id: '3',
                     contentStr: `And this is a really really really really really really really really really really really really really really really really really really really long message!!!`,
                     status: ChatMessageStatus.Delivered,
-                    timeSent: 3
+                    timeSent: 3,
+                    user
                 },
                 {
                     id: '4',
                     contentStr: `This message has a newline!\nAnd then more text!\nIsn't it fabulous?`,
                     status: ChatMessageStatus.Delivered,
-                    timeSent: 4
+                    timeSent: 4,
+                    user
                 }].forEach((msgData) => {
                     channelContentData.messages.unshift(msgData)
                 })
@@ -355,7 +373,8 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             const messageData = incomingMessageQueue_postmeasurement[0].messageData
 
             allChatChannelsContentData.get(channelId)!.messages.unshift(messageData)
-            setLatestMessageUpdateTimestamp(Date.now())
+            recalculateChannelAnnotations(channelId)
+            forceMessageListRerender()
             onChannelContentModified(channelId)
 
             //Remove the message from the incoming queue
@@ -407,7 +426,8 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             id: Date.now().toString(),
             contentStr: message,
             status: ChatMessageStatus.PendingSend,
-            timeSent: Date.now()
+            timeSent: Date.now(),
+            user: `${currentSignalServerUsername}@localhost`
         }
         addNewMessageToAnimationQueue(msgData)
         enqueueOutboundMessage(channelId, { message, timeSent: Date.now() }, msgData.id)
@@ -427,7 +447,8 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
             id: Date.now().toString(),
             contentStr: data.message,
             status: ChatMessageStatus.ReceivedFromRemoteHost,
-            timeSent: data.timeSent
+            timeSent: data.timeSent,
+            user: toString(channelId)
         })
 
         enqueuePushNotification({

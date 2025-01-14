@@ -24,6 +24,10 @@ export type ChatChannelContentData = {
     phonyGenerated: boolean,
 }
 
+interface Annotations {
+    isFirstFromThisUserInBlock: boolean,
+}
+
 export interface ChatMessageData {
     /**Unique ID needed by FlatList*/
     id: string,
@@ -31,6 +35,8 @@ export interface ChatMessageData {
     status: ChatMessageStatus,
     /**Time in milliseconds since epoch */
     timeSent: number
+    user: string
+    annotations?: Annotations
 }
 
 export enum ChatMessageStatus {
@@ -190,4 +196,25 @@ export function deleteAllChannels(): Promise<void> {
         forceRerenderApp()
         resolve()
     })
+}
+
+//TODO: Redesign for scale. We can't go over ridiculously long chat histories with this approach.
+/**Does not call onChannelContentModified.*/
+export function recalculateChannelAnnotations(channelId: DeviceIdentifier) {
+    const contentData = allChatChannelsContentData.get(channelId)
+    if (!contentData) return
+
+    //Messages are stored LIFO
+    let prevUser = ''
+    for (let i = contentData.messages.length; i >= 0; i--) {
+        const msgData = contentData.messages[i]
+        if(!msgData) {
+            console.warn(`Message data is null at [${toString(channelId)}].messages[${i}]`)
+            continue
+        }
+        // @ts-ignore
+        if (!msgData.annotations) msgData.annotations = {}
+        msgData.annotations!.isFirstFromThisUserInBlock = prevUser != msgData.user
+        prevUser = msgData.user
+    }
 }
