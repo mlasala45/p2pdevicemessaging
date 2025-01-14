@@ -6,6 +6,7 @@ import { DeviceIdentifier, DeviceIdentifierUtils } from "./DeviceIdentifier";
 import { allPeerConnections, checkPeerConnectionStatus } from "./P2PNetworking";
 import { registerEventHandler } from "../util/Events";
 import { EventData_channelId, Events } from "../events";
+import { allChatChannelsDetailsData } from "../ChatData";
 
 let pendingOutboundMessages = [] as PendingMessage[];
 let pendingInboundMessages: { channelID: DeviceIdentifier, data: MessageRawData }[] = []
@@ -80,14 +81,25 @@ const SEND_RETRY_DELAY_MS = 500
 export function attemptToSendQueuedMessages() {
     //console.log(`attemptToSendQueuedMessages; queue.length=${pendingOutboundMessages.length}`)
     const newQueue = [] as PendingMessage[]
-    pendingOutboundMessages.forEach(pendingMsg => {
-        //console.log(`${pendingMsg.data.message}; lastSent=${pendingMsg.timeLastSent}; ACK=${pendingMsg.receivedAndAcknowledged}`)
-        if (pendingMsg.receivedAndAcknowledged) return;
-        if (Date.now() - pendingMsg.timeLastSent > SEND_RETRY_DELAY_MS || pendingMsg.timeLastSent < 0) {
-            dispatchPendingMessage(pendingMsg)
-        }
-        newQueue.push(pendingMsg)
+    
+    //TODO: This approach is probably not performant. If performance sending messages becomes an issue, redesign this area
+    const allChannelIds = allChatChannelsDetailsData.map(data => data.id)
+    allChannelIds.forEach(channelId => {
+        const pendingMessagesForChannel = pendingOutboundMessages.filter(pendingMsg => DeviceIdentifierUtils.equals(pendingMsg.channelId, channelId)).sort((a,b) => a.data.timeSent - b.data.timeSent)
+        let firstMsgSent = false;
+        pendingMessagesForChannel.forEach(pendingMsg => {
+            if (pendingMsg.receivedAndAcknowledged) return;
+            newQueue.push(pendingMsg)
+
+            if(firstMsgSent) return;
+            if (Date.now() - pendingMsg.timeLastSent > SEND_RETRY_DELAY_MS || pendingMsg.timeLastSent < 0) {
+                firstMsgSent = true;
+                dispatchPendingMessage(pendingMsg)
+                //console.log(`${pendingMsg.data.message}; lastSent=${pendingMsg.timeLastSent}; ACK=${pendingMsg.receivedAndAcknowledged}`)
+            }
+        })
     })
+
     pendingOutboundMessages = newQueue
     onPendingMessageQueueModified()
 
