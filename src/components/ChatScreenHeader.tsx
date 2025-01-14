@@ -1,11 +1,13 @@
-import { View } from "react-native"
+import { StyleSheet, View } from "react-native"
 import { IconButton, Text } from "react-native-paper"
 import { DeviceIdentifier, toString } from "../networking/DeviceIdentifier"
 import React, { Ref, useState } from "react"
+import { raiseEvent } from "../util/Events"
+import { Events } from "../events"
 
 export function ChatScreenHeader({ setNumSelectedRef, copySelectedMessagesToClipboard, channelId, navigation }: ChatScreenHeaderProps) {
     const [numSelected, setNumSelected] = useState(0)
- 
+
     //@ts-ignore
     setNumSelectedRef.current = setNumSelected
     return <View style={{
@@ -42,21 +44,32 @@ export function ChatScreenHeader({ setNumSelectedRef, copySelectedMessagesToClip
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {numSelected > 0 &&
-                <IconButton
-                    icon='content-copy'
-                    // @ts-ignore
-                    style={{
-                        height: 'fit-content',
-                        aspectRatio: 1,
-                    }}
-                    iconColor='black'
-                    onPress={() => {
-                        copySelectedMessagesToClipboard()
-                    }} />
+                <React.Fragment>
+                    <IconButton
+                        icon='content-copy'
+                        style={styles.iconButton}
+                        iconColor='black'
+                        onPress={() => {
+                            copySelectedMessagesToClipboard()
+                        }} />
+                    <IconButton
+                        icon='delete'
+                        style={styles.iconButton}
+                        iconColor='black'
+                        onPress={() => {raiseEvent(Events.openDialog_deleteSelectedMessages, { channelId })}} />
+                </React.Fragment>
             }
         </View>
     </View>
 }
+
+const styles = StyleSheet.create({
+    iconButton: {
+        //@ts-ignore
+        height: 'fit-content',
+        aspectRatio: 1
+    }
+})
 
 interface ChatScreenHeaderProps {
     setNumSelectedRef: Ref<any>

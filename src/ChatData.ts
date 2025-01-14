@@ -2,7 +2,7 @@ import Toast from 'react-native-toast-message'
 import storage from './Storage'
 import ArrayDictionary from './util/ArrayDictionary'
 
-import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, parseDeviceIdentifier, toString } from './networking/DeviceIdentifier';
+import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString, DeviceIdentifierUtils } from './networking/DeviceIdentifier';
 import { forceRerenderApp } from './App';
 
 export const allChatChannelsDetailsData = new ArrayDictionary<DeviceIdentifier, ChatChannelDetailsData>(KeyFunctions_DeviceIdentifier)
@@ -92,7 +92,7 @@ export function loadAllChannelDetailsFromStorage(): Promise<void> {
                     if (channelDetails.findIndex(item => toString(item.id) == idStr) == -1) {
                         console.log("missing")
                         //Channel data was null, create a blank channel for it
-                        channelDetails.push(BlankChannelData(parseDeviceIdentifier(idStr)))
+                        channelDetails.push(BlankChannelData(DeviceIdentifierUtils.parseDeviceIdentifier(idStr)))
                     }
                 })
                 allChatChannelsDetailsData.loadFromArray(channelDetails)

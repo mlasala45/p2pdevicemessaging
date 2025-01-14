@@ -2,9 +2,11 @@ import { DeviceIdentifier } from "./networking/DeviceIdentifier";
 
 export enum Events {
     onSignalSocketStatusChanged,
-    onClearChatHistory,
+    onChatHistoryCleared,
+    onChatHistoryModified,
     onSignalServerAddressLoaded,
-    onPeerConnectionEstablished
+    onPeerConnectionEstablished,
+    openDialog_deleteSelectedMessages
 }
 
 export interface EventData_channelId {

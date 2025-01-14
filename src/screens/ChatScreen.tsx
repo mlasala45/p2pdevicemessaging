@@ -1,14 +1,14 @@
 import React, { createContext, forwardRef, memo, Ref, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { View, FlatList, Text, Animated, Platform } from 'react-native';
-import { IconButton, TextInput } from 'react-native-paper';
+import { View, FlatList, Animated, Platform, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
+import { Button, Dialog, IconButton, Portal, Text, TextInput } from 'react-native-paper';
 import { allChatChannelsContentData, ChatChannelContentData, ChatMessageData, ChatMessageStatus, loadChannelContentFromStorage, onChannelContentModified, recalculateChannelAnnotations } from '../ChatData';
 import ChatChannelElipsisMenu from '../components/ChatChannelElipsisMenu';
 import { toTimeString } from '../util/date';
-import { attemptToProcessReceivedMessages, attemptToSendQueuedMessages, enqueueOutboundMessage, isMessagePending, MessageRawData } from '../networking/ChatNetworking';
+import { attemptToProcessReceivedMessages, attemptToSendQueuedMessages, dbg_getNumPendingOutbound, deletePendingOutboundMessagesToHost, enqueueOutboundMessage, isMessagePending, MessageRawData } from '../networking/ChatNetworking';
 
 import styles from './styles-ChatScreen'
 
-import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
+import { DeviceIdentifier, DeviceIdentifierUtils, KeyFunctions_DeviceIdentifier, toString } from '../networking/DeviceIdentifier';
 import ArrayDictionary from '../util/ArrayDictionary';
 import { checkPeerConnectionStatus, currentSignalServerUsername, SocketStatus } from '../networking/P2PNetworking';
 import { enqueuePushNotification } from '../foreground-service';
@@ -17,7 +17,7 @@ import { DrawerHeaderProps } from '@react-navigation/drawer';
 
 import { ChatScreenHeader } from '../components/ChatScreenHeader';
 import Toast from 'react-native-toast-message';
-import { registerEventHandler } from '../util/Events';
+import { raiseEvent, registerEventHandler } from '../util/Events';
 import { EventData_channelId, Events } from '../events';
 import { Clipboard } from '../util/ClipBoard';
 
@@ -170,7 +170,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
     const [inputText, setInputText] = React.useState('')
     const [connectionStatus, setConnectionStatus] = React.useState(SocketStatus.Disconnected)
     const [isElipsisMenuOpen, setIsElipsisMenuOpen] = React.useState(false)
-    const [numSelected, setNumSelected] = useState(0)
+    const [dialogVisible_deleteSelectedMessages, setDialogVisible_deleteSelectedMessages] = useState(false)
 
     //"Incoming Message" states
     const [waitingForIncomingMessageAnimToFinish, setWaitingForIncomingMessageAnimToFinish] = React.useState(false)
@@ -304,15 +304,36 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         attemptToProcessReceivedMessages()
 
         const eventHandlersKey = toString(channelId)
-        registerEventHandler(Events.onClearChatHistory, eventHandlersKey, (e: EventData_channelId) => {
-            if (channelId == e.channelId) {
+        registerEventHandler(Events.onChatHistoryModified, eventHandlersKey, (e: EventData_channelId) => {
+            if (DeviceIdentifierUtils.equals(channelId, e.channelId)) {
+                if (channelContentData.current) {
+                    let obsoleteSelections: string[] = []
+                    selectedMessages.current.forEach(msgId => {
+                        if (channelContentData.current!.messages.findIndex(msgData => msgData.id == msgId) < 0) {
+                            obsoleteSelections.push(msgId)
+                        }
+                    })
+                    obsoleteSelections.forEach(msgId => selectedMessages.current.delete(msgId))
+                    numSelectedRef.current = selectedMessages.current.size
+                    if (setNumSelectedRef.current) {
+                        const setter = setNumSelectedRef.current as React.Dispatch<React.SetStateAction<number>>
+                        setter(numSelectedRef.current)
+                    }
+                }
+
                 forceMessageListRerender()
             }
         })
 
-        registerEventHandler(Events.onPeerConnectionEstablished, eventHandlersKey, (e) => {
-            if (channelId == e.channelId) {
+        registerEventHandler(Events.onPeerConnectionEstablished, eventHandlersKey, (e: EventData_channelId) => {
+            if (DeviceIdentifierUtils.equals(channelId, e.channelId)) {
                 forceMessageListRerender()
+            }
+        })
+
+        registerEventHandler(Events.openDialog_deleteSelectedMessages, eventHandlersKey, (e: EventData_channelId) => {
+            if (DeviceIdentifierUtils.equals(channelId, e.channelId)) {
+                setDialogVisible_deleteSelectedMessages(true)
             }
         })
     })
@@ -388,6 +409,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
     })
 
     useEffect(() => {
+        console.log("Check messages still pending; numOutbound=",dbg_getNumPendingOutbound())
         channelContentData.current?.messages.forEach(msgData => {
             if (msgData.status == ChatMessageStatus.PendingSend && !isMessagePending(msgData.id)) {
                 msgData.status = ChatMessageStatus.NotSent
@@ -510,6 +532,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         setWaitingForIncomingMessageAnimToFinish(false)
     }
 
+    /**A set of the ID of each selected message.*/
     const selectedMessages = useRef(new Set<string>())
     function onChatBubbleSelectedChanged(msgId: string, selected: boolean) {
         console.log("onChatBubbleSelectedChanged", msgId, selected)
@@ -524,6 +547,38 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
         if (setNumSelectedRef.current) {
             const setter = setNumSelectedRef.current as React.Dispatch<React.SetStateAction<number>>
             setter(numSelectedRef.current)
+        }
+    }
+
+    function handleTextInputKeypress(e: NativeSyntheticEvent<TextInputKeyPressEventData>) {
+        const key = e.nativeEvent.key
+        if (Platform.OS == 'web') {
+            if (key == 'Enter') {
+                //@ts-ignore
+                if (e.shiftKey) {
+                    return
+                }
+
+                e.preventDefault()
+                sendMessage(inputText)
+            }
+        }
+    }
+
+    function cancelDialog_deleteSelectedMessages() {
+        setDialogVisible_deleteSelectedMessages(false)
+    }
+
+    function confirmDialog_deleteSelectedMessages() {
+        setDialogVisible_deleteSelectedMessages(false)
+        if (channelContentData.current) {
+            channelContentData.current.messages = channelContentData.current.messages.filter(msgData => !selectedMessages.current.has(msgData.id))
+            recalculateChannelAnnotations(channelId)
+            onChannelContentModified(channelId)
+
+            deletePendingOutboundMessagesToHost(channelId, selectedMessages.current)
+
+            raiseEvent(Events.onChatHistoryModified, { channelId })
         }
     }
 
@@ -554,6 +609,7 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                         value={inputText}
                         onChangeText={text => setInputText(text)}
                         onSubmitEditing={() => sendMessage(inputText)}
+                        onKeyPress={handleTextInputKeypress}
                         style={styles.textInput}
                         textColor='white'
                         underlineColor="transparent"
@@ -579,6 +635,21 @@ function ChatScreen({ navigation, route }: Props): React.JSX.Element {
                 channelId={channelId}
                 setConnectionStatus_parent={setConnectionStatus}
             />
+            <Portal>
+                <Dialog visible={dialogVisible_deleteSelectedMessages} style={{
+                    maxWidth: 500,
+                    alignSelf: 'center'
+                }}>
+                    <Dialog.Title style={{}}>{numSelectedRef.current == 1 ? "Delete this message?" : `Delete ${numSelectedRef.current} messages?`}</Dialog.Title>
+                    <Dialog.Content>
+                        <Text variant="bodyMedium">This action cannot be undone.</Text>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={cancelDialog_deleteSelectedMessages}>Cancel</Button>
+                        <Button onPress={confirmDialog_deleteSelectedMessages}>Delete</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </View>
     )
 }

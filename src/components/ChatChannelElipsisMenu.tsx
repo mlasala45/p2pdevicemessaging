@@ -49,7 +49,7 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
             onChannelContentModified(channelId)
             forceRerenderApp()
 
-            raiseEvent(Events.onClearChatHistory, { channelId })
+            raiseEvent(Events.onChatHistoryModified, { channelId })
         }
     }
 

@@ -2,13 +2,13 @@ import Toast from "react-native-toast-message";
 import { sendConnectionRequest_signalServer, SocketStatus } from "./P2PNetworking";
 import { chatScreenNetworkCallbacks } from "../screens/ChatScreen";
 import storage from "../Storage";
-import { DeviceIdentifier } from "./DeviceIdentifier";
+import { DeviceIdentifier, DeviceIdentifierUtils } from "./DeviceIdentifier";
 import { allPeerConnections, checkPeerConnectionStatus } from "./P2PNetworking";
 import { registerEventHandler } from "../util/Events";
 import { EventData_channelId, Events } from "../events";
 
 let pendingOutboundMessages = [] as PendingMessage[];
-let pendingInboundMessages : { channelID : DeviceIdentifier, data : MessageRawData }[] = []
+let pendingInboundMessages: { channelID: DeviceIdentifier, data: MessageRawData }[] = []
 
 interface PendingMessage {
     channelId: DeviceIdentifier,
@@ -26,8 +26,8 @@ export interface MessageRawData {
     timeSent: number
 }
 
-export function onMessageReceived(channelID : DeviceIdentifier, data : MessageRawData) {
-    pendingInboundMessages.push({channelID, data})
+export function onMessageReceived(channelID: DeviceIdentifier, data: MessageRawData) {
+    pendingInboundMessages.push({ channelID, data })
     attemptToProcessReceivedMessages()
 }
 
@@ -78,7 +78,7 @@ export function enqueueOutboundMessage(channelId: DeviceIdentifier, data: Messag
 
 const SEND_RETRY_DELAY_MS = 500
 export function attemptToSendQueuedMessages() {
-    //console.log(`attemptToSendQueuedMessages; queue.length=${pendingMessages.length}`)
+    //console.log(`attemptToSendQueuedMessages; queue.length=${pendingOutboundMessages.length}`)
     const newQueue = [] as PendingMessage[]
     pendingOutboundMessages.forEach(pendingMsg => {
         //console.log(`${pendingMsg.data.message}; lastSent=${pendingMsg.timeLastSent}; ACK=${pendingMsg.receivedAndAcknowledged}`)
@@ -91,18 +91,17 @@ export function attemptToSendQueuedMessages() {
     pendingOutboundMessages = newQueue
     onPendingMessageQueueModified()
 
-    //console.log(`attemptToSendQueuedMessages Finished; queue.newlength=${pendingMessages.length}`)
+    //console.log(`attemptToSendQueuedMessages Finished; queue.newlength=${pendingOutboundMessages.length}`)
 }
 
 export function attemptToProcessReceivedMessages() {
-    const newQueue : typeof pendingInboundMessages = []
+    const newQueue: typeof pendingInboundMessages = []
     pendingInboundMessages.forEach(pendingMsg => {
         const callbacks = chatScreenNetworkCallbacks.get(pendingMsg.channelID)
-        if(callbacks) {
+        if (callbacks) {
             callbacks.onMessageReceived(pendingMsg.data)
         }
-        else
-        {
+        else {
             newQueue.push(pendingMsg)
         }
     })
@@ -154,12 +153,28 @@ export function isMessagePending(msgId: string) {
     return pendingOutboundMessages.findIndex(pendingMsg => pendingMsg.id == msgId) > -1
 }
 
+export function dbg_getNumPendingOutbound() {
+    return pendingOutboundMessages.length
+}
+
 export function clearPendingMessagesToHost(channelId: DeviceIdentifier) {
     pendingOutboundMessages = pendingOutboundMessages.filter(pendingMsg => pendingMsg.channelId != channelId)
     onPendingMessageQueueModified()
 }
 
-registerEventHandler(Events.onClearChatHistory, "chatNetworking", (e : EventData_channelId) => {
+export function deletePendingOutboundMessagesToHost(channelId: DeviceIdentifier, messageIds: Set<string>) {
+    pendingOutboundMessages = pendingOutboundMessages.filter(pendingMsg => {
+        if(DeviceIdentifierUtils.equals(pendingMsg.channelId, channelId)) {
+            return !messageIds.has(pendingMsg.id)
+        }
+        else {
+            return true
+        }
+    })
+    onPendingMessageQueueModified()
+}
+
+registerEventHandler(Events.onChatHistoryCleared, "chatNetworking", (e: EventData_channelId) => {
     pendingOutboundMessages = pendingOutboundMessages.filter(pendingMsg => pendingMsg.channelId != e.channelId)
     onPendingMessageQueueModified()
 })
