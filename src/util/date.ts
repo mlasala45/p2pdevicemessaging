@@ -6,7 +6,7 @@ export function toTimeString(time: Date): string {
     if(!time) return 'ERR'
 
     let hours = time.getHours();
-    let minutes = time.getMinutes();
+    let minutes : number | string = time.getMinutes();
     const ampm = hours >= 12 ? 'pm' : 'am';
 
     hours = hours % 12;
@@ -14,7 +14,7 @@ export function toTimeString(time: Date): string {
         hours = 12;
     }
 
-    minutes = minutes < 10 ? 0 + minutes : minutes;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
 
     return `${hours}:${minutes} ${ampm}`;
 }
