@@ -73,6 +73,7 @@ function HomeScreen(): React.JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  const textColor = isDarkMode ? Colors.white : Colors.black
 
   useEffect(() => {
     if (!publicAddressFound) {
@@ -165,7 +166,7 @@ function HomeScreen(): React.JSX.Element {
               }}
             />
             <View style={{flexDirection:'row', alignItems: 'center'}}>
-              <Text style={{ fontSize: 18, padding: 5, color: 'white', flex: 1 }}>
+              <Text style={{ fontSize: 18, padding: 5, color: textColor, flex: 1 }}>
                 Code:
                 <Text style={{ fontWeight: 'bold' }}> {calculatorAddressCode}</Text>
               </Text>
