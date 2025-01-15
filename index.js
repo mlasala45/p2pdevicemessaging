@@ -12,8 +12,8 @@ import { startup_connectToSignalingServer } from './src/networking/P2PNetworking
 
 clearRegisteredNotificationChannels()
 registerNotificationChannels([
-    { id: 'default', name: 'Default Notifications Channel' },
-    { id: 'foregroundService', name: 'Foreground Service' }
+    { id: 'default', name: 'Default Notifications Channel', vibration: true },
+    { id: 'foregroundService', name: 'Foreground Service', vibration: false }
 ])
 
 export let foregroundServiceChannelId

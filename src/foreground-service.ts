@@ -1,4 +1,4 @@
-import notifee, { AndroidColor } from '@notifee/react-native';
+import notifee, { AndroidColor, EventType } from '@notifee/react-native';
 import { displayNotification, getNotifChannelId } from './util/Notifications';
 import { foregroundServiceChannelId } from '..';
 import { AppState } from 'react-native';
@@ -12,9 +12,20 @@ export function enqueuePushNotification(data: PushNotificationData) {
     pushNotificationQueue.push(data)
 }
 
-export function registerForegroundService() {
+export function registerForegroundService() {    
+    notifee.onBackgroundEvent(async ({ type, detail }) => {
+        const { notification, pressAction } = detail;
+        if (type == EventType.ACTION_PRESS) {
+            const pressAction = detail.pressAction!
+            if (pressAction.id == 'stop-listening') {
+                await stopForegroundService()
+            }
+        }
+    })
+
     notifee.registerForegroundService((notification) => {
         notifee.requestPermission()
+
         return new Promise(() => {
             setInterval(async () => {
                 //console.log("FG Service running!", new Date(), "pushNotificationQueue.length=", pushNotificationQueue.length)
@@ -31,33 +42,52 @@ export function registerForegroundService() {
                                 smallIcon: data.icon,
                                 pressAction: {
                                     id: 'default'
-                                }
-                            }
+                                },
+                            },
                         })
                     }
                     pushNotificationQueue = pushNotificationQueue.slice(1)
                 }
             }, 500)
-
-            notifee.onBackgroundEvent(async ({ type, detail }) => {
-                const { notification, pressAction } = detail;
-            })
         });
     });
 }
 
-export async function launchForegroundService() {
+let foregroundServiceStarted = false
+
+export function launchForegroundService() {
+    if (!foregroundServiceStarted) launchForegroundServiceAsync()
+}
+
+export async function stopForegroundService() {
+    notifee.stopForegroundService()
+    notifee.cancelNotification('foregroundServiceNotif')
+    foregroundServiceStarted = false
+}
+
+async function launchForegroundServiceAsync() {
     await notifee.requestPermission()
     const channelId = await getNotifChannelId('foregroundService')
 
     notifee.displayNotification({
-        title: 'Open P2P Connections',
-        //body: 'This notification will exist for the lifetime of the service runner',
+        title: 'Listening for P2P Messages',
+        id: 'foregroundServiceNotif',
         android: {
             channelId,
             asForegroundService: true,
-            color: AndroidColor.OLIVE,
+            ongoing: true,
+            color: AndroidColor.AQUA,
             colorized: true,
+            pressAction: {
+                id: 'default'
+            },
+            actions: [{
+                title: 'Stop',
+                pressAction: {
+                    id: 'stop-listening'
+                }
+            }]
         },
     });
+    foregroundServiceStarted = true
 }

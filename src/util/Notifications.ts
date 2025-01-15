@@ -2,7 +2,8 @@ import notifee from '@notifee/react-native';
 
 type ChannelDef = {
     id: string,
-    name: string
+    name: string,
+    vibration: boolean
 }
 let registeredChannels : ChannelDef[] = []
 
@@ -23,7 +24,8 @@ export async function getNotifChannelId(idStr: string) {
     const channelRegIndex = registeredChannels.findIndex(def => def.id == idStr)
     if(channelRegIndex == -1) throw Error(`Failed to find notification channel ${idStr}. Did you forget to register it?`);
 
-    return await notifee.createChannel(registeredChannels[channelRegIndex]);
+    const def = registeredChannels[channelRegIndex]
+    return await notifee.createChannel(def);
 }
 
 export async function displayNotification(options : { title: string, body: string, notifChannelId: string, icon?: string }) {

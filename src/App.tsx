@@ -7,13 +7,13 @@ import { PaperProvider } from 'react-native-paper';
 import AddDeviceDialog from './components/AddDeviceDialog';
 import ChatScreen from './screens/ChatScreen';
 import ChatChannelDrawerItem from './components/ChatChannelDrawerItem';
-import { Platform } from 'react-native';
+import { AppState, AppStateStatus, Platform } from 'react-native';
 
 import { allChatChannelsDetailsData, deleteChatChannel, loadAllChannelDetailsFromStorage } from './ChatData';
 import SettingsScreen from './screens/SettingsScreen';
 import Toast, { ErrorToast } from 'react-native-toast-message';
 import { attemptToSendQueuedMessages, loadPersistentNetworkData } from './networking/ChatNetworking';
-import { launchForegroundService } from './foreground-service';
+import { launchForegroundService, registerForegroundService } from './foreground-service';
 import { registerEventHandler } from './util/Events';
 import { EventData_channelId, Events } from './events';
 
@@ -53,10 +53,6 @@ export default function App() {
     loadPersistentNetworkData()
 
     setInterval(attemptToSendQueuedMessages, REATTEMPT_MSG_SEND_INTERVAL_MS)
-
-    if (Platform.OS == 'android') {
-      launchForegroundService()
-    }
   }, [])
 
   React.useEffect(() => {
@@ -64,6 +60,19 @@ export default function App() {
       forceRerenderApp()
     })
   })
+
+  const isMobile = Platform.OS == 'android' || Platform.OS == 'ios'
+  if (isMobile) {
+    React.useEffect(() => {
+      const listener = AppState.addEventListener('change', handleAppStateChange)
+
+      launchForegroundService()
+
+      return () => {
+        listener.remove()
+      }
+    }, [])
+  }
 
   if (Platform.OS == "web") {
     React.useEffect(() => {
@@ -77,6 +86,12 @@ export default function App() {
 
   forceRerenderApp = function () {
     setToggleToUpdate(!toggleToUpdate);
+  }
+
+  function handleAppStateChange(newState: AppStateStatus) {
+    if (newState == 'active') {
+      launchForegroundService()
+    }
   }
 
   return (
