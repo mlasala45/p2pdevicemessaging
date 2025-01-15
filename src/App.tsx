@@ -93,6 +93,7 @@ export default function App() {
         <NavigationContainer onStateChange={() => updateWindowTitle()}>
           <Drawer.Navigator drawerContent={(props) => <DevicesDrawerContent {...props} setDialogVisible_addDevice={setDialogVisible_addDevice} />} initialRouteName="Settings">
             <Drawer.Screen name="Home" component={HomeScreen} />
+            <Drawer.Screen name="Settings" component={SettingsScreen} />
             {allChatChannelsDetailsData.map((data, index) => {
               console.log("Render drawer item", data, index)
               console.dir(data)
@@ -107,7 +108,6 @@ export default function App() {
                 }}
               />
             })}
-            <Drawer.Screen name="Settings" component={SettingsScreen} />
           </Drawer.Navigator>
         </NavigationContainer>
         <AddDeviceDialog visible={dialogVisible_addDevice} setVisible={setDialogVisible_addDevice} />
