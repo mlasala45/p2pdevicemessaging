@@ -134,6 +134,7 @@ function ChatScreenElipsisMenu({ visible, onDismiss, anchor, channelId, setConne
 const styles = StyleSheet.create({
     dialog: {
         maxWidth: 500,
+        maxHeight: 250,
         alignSelf: 'center'
     }
 })
