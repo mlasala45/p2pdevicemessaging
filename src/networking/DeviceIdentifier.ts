@@ -3,7 +3,7 @@ export type DeviceIdentifier = {
     username: string
 }
 
-export function toString(value: DeviceIdentifier) {
+export function toString(value?: DeviceIdentifier) {
     if (!value) return Object.prototype.toString.call(value)
     if (value.username) {
         return `${value.username}@${value.address}`
