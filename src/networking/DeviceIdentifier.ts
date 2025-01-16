@@ -14,8 +14,20 @@ export function toString(value?: DeviceIdentifier) {
 }
 
 export const DeviceIdentifierUtils = {
+    /**Checks for member-wise equality between two DeviceIdentifiers.*/
     equals(k0: DeviceIdentifier, k1: DeviceIdentifier): boolean {
+        if(!k0) return !k1;
+        if(!k1) return !k0;
         return k0.address === k1.address && k0.username === k1.username;
+    },
+
+    /**Checks to see if the device identifiers could match. Supports wildcard/omitted usernames.*/
+    matches(k0: DeviceIdentifier, k1: DeviceIdentifier) {
+        if(!k0) return !k1;
+        if(!k1) return !k0;
+        if(k0.address != k1.address) return false;
+        if(k0.username == '' || k0.username == '*' || k1.username == '' || k1.username == '*') return true;
+        return k0.username == k1.username;
     },
 
     parseDeviceIdentifier(str: string): DeviceIdentifier {

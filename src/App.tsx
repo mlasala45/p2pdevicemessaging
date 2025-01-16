@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './screens/HomeScreen'
 import { DevicesDrawerContent } from './components/DevicesDrawerContent'
 import { PaperProvider } from 'react-native-paper';
@@ -9,13 +9,16 @@ import ChatScreen from './screens/ChatScreen';
 import ChatChannelDrawerItem from './components/ChatChannelDrawerItem';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 
-import { allChatChannelsDetailsData, deleteChatChannel, loadAllChannelDetailsFromStorage } from './ChatData';
+import { allChatChannelsDetailsData, loadAllChannelDetailsFromStorage } from './ChatData';
 import SettingsScreen from './screens/SettingsScreen';
 import Toast, { ErrorToast } from 'react-native-toast-message';
 import { attemptToSendQueuedMessages, loadPersistentNetworkData } from './networking/ChatNetworking';
-import { launchForegroundService, registerForegroundService } from './foreground-service';
+import { allPendingPeerConnections, loadPersistentData as loadPersistentP2PData } from './networking/P2PNetworking';
+import { launchForegroundService } from './foreground-service';
 import { registerEventHandler } from './util/Events';
 import { EventData_channelId, Events } from './events';
+import PendingChatChannelDrawerItem from './components/PendingChatChannelDrawerItem';
+import { toString } from './networking/DeviceIdentifier';
 
 const Drawer = createDrawerNavigator();
 export const AppLevelActions = React.createContext({} as {
@@ -49,8 +52,11 @@ export default function App() {
 
   const REATTEMPT_MSG_SEND_INTERVAL_MS = 500
   React.useEffect(() => {
-    loadAllChannelDetailsFromStorage().then(forceRerenderApp)
+    loadAllChannelDetailsFromStorage().then(() => {
+      forceRerenderApp()
+    })
     loadPersistentNetworkData()
+    loadPersistentP2PData()
 
     setInterval(attemptToSendQueuedMessages, REATTEMPT_MSG_SEND_INTERVAL_MS)
   }, [])
@@ -94,6 +100,18 @@ export default function App() {
     }
   }
 
+  let drawerItemKeyIndex = 0;
+
+  let screenNames : string[] = []
+  function validateScreenName(name: string) {
+    let sampleName = name
+    let index = 2
+    while(screenNames.includes(sampleName)) {
+      sampleName = `${name}-#${index++}`
+    }
+    screenNames.push(sampleName)
+    return sampleName
+  }
   return (
     <React.Fragment>
       <PaperProvider>
@@ -107,14 +125,14 @@ export default function App() {
         ) : null}
         <NavigationContainer onStateChange={() => updateWindowTitle()}>
           <Drawer.Navigator drawerContent={(props) => <DevicesDrawerContent {...props} setDialogVisible_addDevice={setDialogVisible_addDevice} />} initialRouteName="Settings">
-            <Drawer.Screen name="Home" component={HomeScreen} />
-            <Drawer.Screen name="Settings" component={SettingsScreen} />
+            <Drawer.Screen name="Home" component={HomeScreen} key={drawerItemKeyIndex++} />
+            <Drawer.Screen name="Settings" component={SettingsScreen} key={drawerItemKeyIndex++} />
             {allChatChannelsDetailsData.map((data, index) => {
               console.log("Render drawer item", data, index)
               console.dir(data)
               return <Drawer.Screen
-                name={data.name}
-                key={index}
+                name={validateScreenName(data.name)}
+                key={drawerItemKeyIndex++}
                 component={ChatScreen}
                 initialParams={{ channelId: data.id }}
                 options={{
@@ -122,6 +140,17 @@ export default function App() {
                   drawerLabelStyle: {}
                 }}
               />
+            })}
+            {allPendingPeerConnections.map(pendingConnection => {
+              const name = toString(pendingConnection.deviceId)
+              return <Drawer.Screen
+                name={validateScreenName(name)}
+                key={drawerItemKeyIndex++}
+                component={ChatScreen}
+                initialParams={{ channelId: pendingConnection.deviceId }}
+                options={{
+                  drawerLabel: () => <PendingChatChannelDrawerItem label={name} peerId={pendingConnection.deviceId} isOutbound={pendingConnection.isOutbound} />
+                }} />
             })}
           </Drawer.Navigator>
         </NavigationContainer>

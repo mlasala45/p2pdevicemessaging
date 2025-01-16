@@ -71,6 +71,7 @@ function ChatBubble({ msgData, onLayout, onSelectedChanged, allowQuickSelect }: 
     }
 
     const textAlign = messageShouldBeLeftAligned ? 'left' : 'right'
+    const newUserMargin = Platform.OS == 'web' ? 10 : 5
 
     //Components in the list are drawn bottom-to-top
     return (
@@ -100,7 +101,7 @@ function ChatBubble({ msgData, onLayout, onSelectedChanged, allowQuickSelect }: 
             </Pressable>
             {msgData.annotations?.isFirstFromThisUserInBlock &&
                 <View style={{ ...chatBubbleAlignStyles }}>
-                    <Text style={{ color: 'white', fontWeight: 500, margin: 5 }}>{msgData.user}</Text>
+                    <Text style={{ color: 'white', fontWeight: 500, margin: 5, marginTop: newUserMargin }}>{msgData.user}</Text>
                 </View>
             }
         </React.Fragment >

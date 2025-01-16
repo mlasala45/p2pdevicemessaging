@@ -68,15 +68,20 @@ export function encodeIpv4(ipv4: string): string {
 }
 
 export function decodeToIpv4(codeStr: string): string {
-    const cleanStr = codeStr.replace('-', '');
-    const num = decodeStringToNumber(cleanStr);
+    try {
+        const cleanStr = codeStr.replace('-', '');
+        const num = decodeStringToNumber(cleanStr);
 
-    const octet1 = (num >>> 24) & 0xFF;
-    const octet2 = (num >>> 16) & 0xFF;
-    const octet3 = (num >>> 8) & 0xFF;
-    const octet4 = num & 0xFF;
+        const octet1 = (num >>> 24) & 0xFF;
+        const octet2 = (num >>> 16) & 0xFF;
+        const octet3 = (num >>> 8) & 0xFF;
+        const octet4 = num & 0xFF;
 
-    return `${octet1}.${octet2}.${octet3}.${octet4}`;
+        return `${octet1}.${octet2}.${octet3}.${octet4}`;
+    }
+    catch (e) {
+        return "ERR"
+    }
 }
 
 export function isCodeValid(code: string) {

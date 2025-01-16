@@ -29,6 +29,8 @@ export function DevicesDrawerContent({ setDialogVisible_addDevice, ...props }: C
         else {
             descriptorSections[2][key] = value
         }
+
+        //TODO: Seperate outbound and inbound requests
     })
 
     /*let props_modified = []
@@ -39,16 +41,19 @@ export function DevicesDrawerContent({ setDialogVisible_addDevice, ...props }: C
         }
     }*/
 
+    let keyIndex = 0;
+
     function DrawerItemList(descriptors: Record<string, any>, precedeWithDivider: boolean) {
         const length = Object.keys(descriptors).length
         if (length > 0) {
             return (
                 <React.Fragment>
-                    {precedeWithDivider && <Divider />}
+                    {precedeWithDivider && <Divider key={keyIndex++} />}
                     {Object.entries(descriptors).map(([key, descriptor]) => {
                         const name = descriptor.route.name
                         const labelFn = descriptor.options.drawerLabel ? (props: { focused: boolean, color: string }) => descriptor.options.drawerLabel(props) : undefined
                         return <DrawerItem
+                            key={keyIndex++}
                             label={labelFn || name}
                             onPress={() => props.navigation.navigate(name)} />
                     })}
@@ -63,7 +68,8 @@ export function DevicesDrawerContent({ setDialogVisible_addDevice, ...props }: C
     return (
         <DrawerContentScrollView {...props}>
             {DrawerItemList(descriptorSections[0], false)}
-            <DrawerItem
+            <DrawerItem        
+                key={keyIndex++}
                 label="Connect to new Device"
                 onPress={() => showDialog_addDevice()}
             />

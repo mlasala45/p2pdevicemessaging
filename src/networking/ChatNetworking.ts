@@ -1,9 +1,9 @@
 import Toast from "react-native-toast-message";
-import { sendConnectionRequest_signalServer, SocketStatus } from "./P2PNetworking";
+import { reestablishExistingConnection_signalServer, sendConnectionRequest_signalServer, SocketStatus } from "./P2PNetworking";
 import { chatScreenNetworkCallbacks } from "../screens/ChatScreen";
 import storage from "../Storage";
 import { DeviceIdentifier, DeviceIdentifierUtils } from "./DeviceIdentifier";
-import { allPeerConnections, checkPeerConnectionStatus } from "./P2PNetworking";
+import { allConfirmedPeerConnections, checkPeerConnectionStatus } from "./P2PNetworking";
 import { registerEventHandler } from "../util/Events";
 import { EventData_channelId, Events } from "../events";
 import { allChatChannelsDetailsData } from "../ChatData";
@@ -33,7 +33,7 @@ export function onMessageReceived(channelID: DeviceIdentifier, data: MessageRawD
 }
 
 export function connectExistingChatChannel(channelId: DeviceIdentifier) {
-    sendConnectionRequest_signalServer(channelId.address, channelId.username)
+    reestablishExistingConnection_signalServer(channelId)
 }
 
 /** Loads outbound messages that were pending at last save. */
@@ -137,7 +137,7 @@ export function dispatchPendingMessage(pendingMsg: PendingMessage) {
     //console.log("Status:", SocketStatus[connectionStatus])
     if (connectionStatus == SocketStatus.Connected) {
         //console.log("dispatch went to data channel")
-        allPeerConnections.get(pendingMsg.channelId)!.dataChannel_chat?.send(JSON.stringify({
+        allConfirmedPeerConnections.get(pendingMsg.channelId)!.dataChannel_chat?.send(JSON.stringify({
             type: "chatMessage",
             content: pendingMsg.data.message,
             msgId: pendingMsg.id,

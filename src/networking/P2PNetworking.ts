@@ -4,7 +4,7 @@ import Toast from 'react-native-toast-message';
 import { allChatChannelsDetailsData, createNewChannel } from '../ChatData';
 import ArrayDictionary from '../util/ArrayDictionary';
 
-import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString } from './DeviceIdentifier';
+import { DeviceIdentifier, DeviceIdentifierUtils, KeyFunctions_DeviceIdentifier, toString } from './DeviceIdentifier';
 import { forceRerenderApp } from '../App';
 import { chatScreenNetworkCallbacks } from '../screens/ChatScreen';
 import RTCDataChannel from 'react-native-webrtc/lib/typescript/RTCDataChannel';
@@ -13,6 +13,7 @@ import { acknowledgeMessageReceipt, onMessageReceived } from './ChatNetworking';
 import { raiseEvent } from '../util/Events';
 import { Events } from '../events';
 import storage from '../Storage';
+import { emit } from 'process';
 
 export interface PublicNetworkAddress {
   ipv4: string,
@@ -106,7 +107,61 @@ export function displayNetworkError(error: Error) {
   })
 }
 
-export const allPeerConnections = new ArrayDictionary<DeviceIdentifier, P2PConnectionRefs>(KeyFunctions_DeviceIdentifier)
+interface PendingPeerConnection {
+  deviceId: DeviceIdentifier,
+  isOutbound: boolean
+}
+
+export function loadPersistentData() {
+  storage.load({
+    key: 'pendingPeerConnections'
+  }).then((data: PendingPeerConnection[]) => {
+    allPendingPeerConnections = data.filter(item => item != null)
+  })
+  onPendingConnectionsListModified()
+}
+
+export function savePersistentData() {
+  storage.save({
+    key: 'pendingPeerConnections',
+    data: allPendingPeerConnections
+  })
+}
+
+export enum PendingRequestOperation {
+  Cancel,
+  Accept,
+  Reject
+}
+
+export function operateOnPendingRequest(op: PendingRequestOperation, peerId: DeviceIdentifier) {
+  const matchIndex = allPendingPeerConnections.findIndex(pendingConnection => DeviceIdentifierUtils.equals(pendingConnection.deviceId, peerId));
+  if (matchIndex >= 0) {
+    switch (op) {
+      case PendingRequestOperation.Cancel:
+        allPendingPeerConnections.splice(matchIndex, 1)
+        onPendingConnectionsListModified()
+        signalingServerSocket.emit('cancel-connection-request', { peerId })
+        break;
+      case PendingRequestOperation.Accept:
+        signalingServerSocket.emit('accept-connection-request', { peerId })
+        break;
+      case PendingRequestOperation.Reject:
+        allPendingPeerConnections.splice(matchIndex, 1)
+        onPendingConnectionsListModified()
+        signalingServerSocket.emit('reject-connection-request', { peerId })
+        break;
+    }
+  }
+}
+
+function onPendingConnectionsListModified() {
+  forceRerenderApp()
+  savePersistentData()
+}
+
+export const allConfirmedPeerConnections = new ArrayDictionary<DeviceIdentifier, P2PConnectionRefs>(KeyFunctions_DeviceIdentifier)
+export let allPendingPeerConnections: PendingPeerConnection[] = []
 function onPeerConnectionEstablished(refs: P2PConnectionRefs, id: DeviceIdentifier) {
   console.log("onPeerConnectionEstablished", refs, id)
 
@@ -121,7 +176,7 @@ function onPeerConnectionEstablished(refs: P2PConnectionRefs, id: DeviceIdentifi
 function onPeerConnectionTerminated(id: DeviceIdentifier) {
   console.log("onPeerConnectionTerminated")
   checkPeerConnectionStatus(id)
-  allPeerConnections.remove(id)
+  allConfirmedPeerConnections.remove(id)
   chatScreenNetworkCallbacks.get(id)?.onDisconnected()
 }
 
@@ -138,7 +193,7 @@ let activeHandshakePeerId: DeviceIdentifier | null
 function startIceHandshake(signallingChannelSocket: Socket, peerDeviceId: DeviceIdentifier, shouldSendOffer: boolean) {
   console.log("startIceHandshake", toString(peerDeviceId), "outgoing=", shouldSendOffer)
 
-  const prevEntry = allPeerConnections.get(peerDeviceId)
+  const prevEntry = allConfirmedPeerConnections.get(peerDeviceId)
   if (prevEntry) {
     prevEntry.peerConnection.close()
     onPeerConnectionTerminated(peerDeviceId)
@@ -161,7 +216,7 @@ function startIceHandshake(signallingChannelSocket: Socket, peerDeviceId: Device
     refs.dataChannel_chat = peerConnection.createDataChannel('chat')
     initializeDataChannel(refs, peerDeviceId)
   }
-  allPeerConnections.add(refs)
+  allConfirmedPeerConnections.add(refs)
 
   activeHandshakeConnectionRefs = refs
   activeHandshakePeerId = peerDeviceId
@@ -333,6 +388,8 @@ export function connectToSignalingServer(address: string, username: string) {
     currentSignalServerUsername = username
     raiseEvent(Events.onSignalSocketStatusChanged, { newStatus: SocketStatus.Connected })
     //onSignalSocketStatusChanged(SocketStatus.Connected)
+
+    syncConnectionRequestsToServer()
   })
 
   socket.on("connect_error", (error) => {
@@ -355,17 +412,74 @@ export function connectToSignalingServer(address: string, username: string) {
     //onSignalSocketStatusChanged(SocketStatus.Disconnected)
   })
 
+  //Request Management Events
+  //
+
+  function onRemoteHostRequestedConnection({ sender }: { sender: DeviceIdentifier }) {
+    console.log('Received \'request-connection\'', sender)
+    const matchIndex = allPendingPeerConnections.findIndex(pendingConnection => {
+      return DeviceIdentifierUtils.equals(pendingConnection.deviceId, sender)
+    })
+    if (matchIndex < 0) {
+      console.log("Creating record")
+      allPendingPeerConnections.push({
+        deviceId: sender,
+        isOutbound: false
+      })
+      onPendingConnectionsListModified()
+    }
+    else if (allPendingPeerConnections[matchIndex].isOutbound) {
+      console.log("Preexisting match")
+      //Accept the preexisting connection
+    }
+    else {
+      console.log("Inbound connection already exists")
+    }
+    console.log("End of socket.on('request-connection')")
+  }
+
+  socket.on('request-connection', onRemoteHostRequestedConnection)
+
+
+  socket.on('cancel-connection-request', ({ sender }: { sender: DeviceIdentifier }) => {
+    console.log('cancel-connection-request', sender)
+    const matchIndex = allPendingPeerConnections.findIndex(pendingConnection => DeviceIdentifierUtils.equals(pendingConnection.deviceId, sender))
+    if (matchIndex >= 0) {
+      allPendingPeerConnections.splice(matchIndex, 1)
+      onPendingConnectionsListModified()
+    }
+  })
+
+  socket.on('reconnect-existing-connection', ({ sender }: { sender: DeviceIdentifier }, callback) => {
+    //Exact matches only
+    if (allChatChannelsDetailsData.containsKey(sender)) {
+      onInstructedToStartIceHandshake({ peerAddress: sender.address, peerUsername: sender.username, shouldSendOffer: true })
+      callback('approve')
+    }
+    else {
+      callback('pending')
+      //Request connection
+      onRemoteHostRequestedConnection({ sender })
+    }
+  })
+
   //Handshake Management Events
   //
 
-  //TODO: Verify that you asked to be connected to this peer
-  socket.on('start-ice-handshake', (peerAddress: string, peerUsername: string, shouldSendOffer: boolean) => {
+  function onInstructedToStartIceHandshake({ peerAddress, peerUsername, shouldSendOffer }: { peerAddress: string, peerUsername: string, shouldSendOffer: boolean }) {
     console.log(`Starting handshake with ${composite(peerAddress, peerUsername)}`)
+
+    const peerId = { address: peerAddress, username: peerUsername }
+    allPendingPeerConnections = allPendingPeerConnections.filter(pendingConnection => !DeviceIdentifierUtils.matches(pendingConnection.deviceId, peerId))
+    onPendingConnectionsListModified()
 
     answerReceived = false
     iceCandidatesQueue = []
     startIceHandshake(signalingServerSocket, { address: peerAddress, username: peerUsername }, shouldSendOffer)
-  })
+  }
+
+  //TODO: Verify that you asked to be connected to this peer
+  socket.on('start-ice-handshake', onInstructedToStartIceHandshake)
 
   socket.on('unknown-peer', (peerAddress: string, peerUsername: string) => {
     console.log(`Server does not recognize ${composite(peerAddress, peerUsername)}`)
@@ -442,9 +556,9 @@ export function updateSignalServerUsername(username: string) {
   signalingServerSocket.emit('change-username', username)
 }
 
-export function sendConnectionRequest_signalServer(peerAddress: string, peerUsername: string) {
-  if (signalingServerSocket && signalingServerSocket.connected) {
-    signalingServerSocket.emit('request-connection', peerAddress, peerUsername)
+export function reestablishExistingConnection_signalServer(channelId: DeviceIdentifier) {
+  if (isConnectedToSignalServer()) {
+    signalingServerSocket.emit('reconnect-existing-connection', { peerId: channelId })
   }
   else {
     Toast.show({
@@ -454,9 +568,49 @@ export function sendConnectionRequest_signalServer(peerAddress: string, peerUser
   }
 }
 
+export function sendConnectionRequest_signalServer(peerAddress: string, peerUsername: string) {
+  const requestedDeviceId = { address: peerAddress, username: peerUsername }
+  allPendingPeerConnections = allPendingPeerConnections.filter(item => item != null)
+  const matchIndex = allPendingPeerConnections.findIndex(pendingConnection => DeviceIdentifierUtils.equals(pendingConnection.deviceId, requestedDeviceId))
+  if (matchIndex < 0) {
+    //Create the pending outbound request
+    allPendingPeerConnections.push({
+      deviceId: requestedDeviceId,
+      isOutbound: true
+    })
+    onPendingConnectionsListModified()
+  }
+  else if (!allPendingPeerConnections[matchIndex].isOutbound) {
+    //Accept the inbound connection
+    onPendingConnectionsListModified()
+    return
+  }
+
+  if (signalingServerSocket && signalingServerSocket.connected) {
+    //Sync all requests to the signal server
+    syncConnectionRequestsToServer()
+  }
+  else {
+    Toast.show({
+      type: 'error',
+      text1: 'Not Connected to Signal Server'
+    })
+  }
+}
+
+function syncConnectionRequestsToServer() {
+  signalingServerSocket.emit('sync-connection-requests',
+    allPendingPeerConnections
+      .filter(pendingConnection => pendingConnection.isOutbound)
+      .map(pendingConnection => pendingConnection.deviceId))
+}
+
 export function disconnectPeerConnection(deviceId: DeviceIdentifier) {
+  if(!deviceId) return;
+  signalingServerSocket.emit('cancel-connection-request', { peerId: deviceId })
+
   console.log("disconnectPeerConnection")
-  const refs = allPeerConnections.get(deviceId)
+  const refs = allConfirmedPeerConnections.get(deviceId)
   if (refs) {
     const msg = JSON.stringify({
       type: 'disconnect',
@@ -474,7 +628,7 @@ export function isConnectedToSignalServer() {
 
 /** Returns the status of the connection. Triggers onPeerConnectionStateChange() if the state has changed since the last time this was called. */
 export function checkPeerConnectionStatus(channelId: DeviceIdentifier): SocketStatus {
-  const refs = allPeerConnections.get(channelId)
+  const refs = allConfirmedPeerConnections.get(channelId)
   //console.log("checkPeerConnectionStatus")
   //console.dir(refs)
   const status = (() => {

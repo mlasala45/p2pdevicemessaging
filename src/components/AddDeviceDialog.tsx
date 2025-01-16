@@ -25,6 +25,7 @@ function makecallback_onChangeText_AddressCode(addressCode: { value: string, set
         text = text.replace(/[^a-zA-Z0-9-]/g, '');
         if (text.length == 3 && addressCode.value.length == 2) text = text + '-'
         if (text.length == 4 && text.charAt(3) != '-') text = text.slice(0, 3) + '-' + text.slice(3);
+        if(text.charAt(text.length-1) == '-' && text.length != 4) text = text.slice(0,text.length-1)
         text = text.toUpperCase()
         text = text.slice(0, 8)
         addressCode.set(text)
@@ -99,10 +100,6 @@ const Tab_BySignalServer = () => {
                 value={username}
                 onChangeText={
                     text => {
-                        if (text != '') {
-                            const port = parseInt(text) || 0
-                            text = Math.min(port, 65535).toString()
-                        }
                         setUsername(text)
                     }
                 }
@@ -190,7 +187,8 @@ const AddDeviceDialog = ({ visible, setVisible }: AddDeviceDialogProps) => {
 
     function onClick_Next() {
         if (dialogStep == 0) {
-            setDialogStep(dialogStep + 1)
+            //setDialogStep(dialogStep + 1)
+            hideDialog()
 
             sendConnectionRequest_signalServer(ipv4Str_noport, username)
 
@@ -272,16 +270,18 @@ const AddDeviceDialog = ({ visible, setVisible }: AddDeviceDialogProps) => {
                 <Dialog.Title>Send Connection Request</Dialog.Title>
                 {dialogStep == 0 &&
                     <Dialog.Content>
-                        <View style={{minHeight:260}}>
+                        <View style={{ minHeight: 260 }}>
                             <NavigationContainer onStateChange={(state) => {
                                 updateWindowTitle()
                                 if (state) setCurrentRouteName(state.routes[state.index].name)
                             }}>
-                                <Tab.Navigator screenOptions={{
-                                    sceneStyle: { backgroundColor: 'clear', minHeight: 200 }
-                                }}
+                                <Tab.Navigator
+                                    screenOptions={{
+                                        sceneStyle: { backgroundColor: 'clear', minHeight: 200 }
+                                    }}
                                     style={{
-                                    }}>
+                                    }}
+                                    initialRouteName='By Signal Server'>
                                     <Tab.Screen name="By Address" component={Tab_ByAddress} />
                                     <Tab.Screen name="By Signal Server" component={Tab_BySignalServer} />
                                 </Tab.Navigator>

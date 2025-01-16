@@ -4,6 +4,7 @@ import ArrayDictionary from './util/ArrayDictionary'
 
 import { DeviceIdentifier, KeyFunctions_DeviceIdentifier, toString, DeviceIdentifierUtils } from './networking/DeviceIdentifier';
 import { forceRerenderApp } from './App';
+import { disconnectPeerConnection } from './networking/P2PNetworking';
 
 export const allChatChannelsDetailsData = new ArrayDictionary<DeviceIdentifier, ChatChannelDetailsData>(KeyFunctions_DeviceIdentifier)
 export const allChatChannelsContentData = new ArrayDictionary<DeviceIdentifier, ChatChannelContentData>(KeyFunctions_DeviceIdentifier)
@@ -168,6 +169,8 @@ export function loadChannelContentFromStorage(channelId: DeviceIdentifier): Prom
 export function deleteChatChannel(channelId: DeviceIdentifier) {
     console.log("deleteChannel")
     console.log(channelId)
+
+    disconnectPeerConnection(channelId)
 
     allChatChannelsDetailsData.remove(channelId)
     storage.remove({

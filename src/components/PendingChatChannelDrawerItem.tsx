@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Pressable } from 'react-native';
 import { ActivityIndicator, Icon, IconButton } from 'react-native-paper';
-import ChatChannelElipsisMenu from './ChatChannelElipsisMenu';
+import PendingChatChannelElipsisMenu from './PendingChatChannelElipsisMenu';
 import { checkPeerConnectionStatus } from '../networking/P2PNetworking';
 import { SocketStatus } from '../networking/P2PNetworking';
 
 import { DeviceIdentifier } from '../networking/DeviceIdentifier';
 
-function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
+function PendingChatChannelDrawerItem({ label, peerId, isOutbound }: Props) {
     const [isElipsisMenuOpen, setIsElipsisMenuOpen] = useState(false)
-    const [connectionStatus, setConnectionStatus] = useState(SocketStatus.Disconnected)
 
     function openElipsisMenu() {
         setIsElipsisMenuOpen(true)
@@ -19,10 +18,6 @@ function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
         setIsElipsisMenuOpen(false)
     }
 
-    useEffect(() => {
-        setConnectionStatus(checkPeerConnectionStatus(channelId))
-    })
-
     return (
         <View style={{ flexDirection: 'row', paddingHorizontal: 1, justifyContent: 'space-between', alignItems: 'center' }}>
             <Text allowFontScaling={undefined} style={styles.textOuter}>
@@ -31,22 +26,10 @@ function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
                 </Text>
             </Text>
             <View style={styles.iconsView}>
-                {(connectionStatus == SocketStatus.Connected || connectionStatus == SocketStatus.Disconnected) &&
-                    <Icon
-                        source="connection"
-                        size={20}
-                        color={connectionStatus == SocketStatus.Connected ? 'green' : 'red'}
-                    />}
-                {connectionStatus == SocketStatus.ConnectionError &&
-                    <Icon
-                        source="alert-circle-outline"
-                        size={20}
-                        color='red'
-                    />}
-                    {connectionStatus == SocketStatus.Connecting &&
-                    <ActivityIndicator style={{transform: [{ scale: .8 }]}}/>}
-
-                <ChatChannelElipsisMenu
+                <Text allowFontScaling={undefined} style={{ ...styles.textInner, color: 'red' }}>
+                    {isOutbound ? 'Request Sent' : 'Accept?'}
+                </Text>
+                <PendingChatChannelElipsisMenu
                     visible={isElipsisMenuOpen}
                     onDismiss={closeElipsisMenu}
                     anchor={
@@ -60,10 +43,10 @@ function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
                             />
                         </Pressable>
                     }
-                    channelId={channelId}
-                    setConnectionStatus_parent={setConnectionStatus}
+                    peerId={peerId}
+                    isOutboundRequest={isOutbound}
                 >
-                </ChatChannelElipsisMenu>
+                </PendingChatChannelElipsisMenu>
             </View>
         </View>
     )
@@ -72,7 +55,7 @@ function ChatChannelDrawerItem({ label, onPress, channelId }: Props) {
 const styles = StyleSheet.create({
     textOuter: {
         "lineHeight": 24,
-        "textAlignVertical": "center",
+        //"textAlignVertical": "center",
         "fontFamily": "sans-serif-medium",
         "fontWeight": "normal"
     },
@@ -81,15 +64,15 @@ const styles = StyleSheet.create({
         "fontFamily": 'system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
         "fontWeight": 500,
         "lineHeight": 24,
-        "textAlignVertical": "center"
+        //"textAlignVertical": "center"
     },
     iconsView: { flexDirection: 'row', alignItems: 'center' }
 });
 
 interface Props {
     label: string,
-    connected: boolean,
-    channelId: DeviceIdentifier
+    peerId: DeviceIdentifier,
+    isOutbound: boolean
 }
 
-export default ChatChannelDrawerItem;
+export default PendingChatChannelDrawerItem;
