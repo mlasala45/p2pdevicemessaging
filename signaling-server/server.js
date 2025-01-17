@@ -38,8 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var socket_io_1 = require("socket.io");
 var http = require('http');
+var LINE_BREAK = "\x1b[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\x1b[0m";
+console.log(LINE_BREAK);
+console.log("\x1b[32mP2P Messaging App - Signaling Server v1.0.0\x1b[0m");
+console.log("\x1b[32mCreated by Micah LaSala, Jan 2025\x1b[0m");
+console.log(LINE_BREAK);
 var httpServer = http.createServer();
-httpServer.listen(3000, '0.0.0.0');
+httpServer.listen(3000, '0.0.0.0', function () { onServerStartedListening(); });
 var server = new socket_io_1.Server(httpServer, {
     cors: {
         origin: "*", // Allow all origins (you can also specify specific origins, e.g., "http://example.com")
@@ -398,14 +403,15 @@ server.on("connection", function (socket) {
         (_b = getHost((_a = hostData.pairingState) === null || _a === void 0 ? void 0 : _a.otherPeer)) === null || _b === void 0 ? void 0 : _b.socket.emit('ice-answer', answerData);
     });
 });
-//server.listen(3000)
-var addressInfo = server.httpServer.address();
-function isAddressInfo(addressInfo) {
-    return addressInfo != undefined;
-}
-if (isAddressInfo(addressInfo)) {
-    console.log("Opened server on ".concat(addressInfo.address, ", on port ").concat(addressInfo.port));
-}
-else {
-    console.log("Opened server on ".concat(addressInfo));
+function onServerStartedListening() {
+    var addressInfo = server.httpServer.address();
+    function isAddressInfo(addressInfo) {
+        return addressInfo != undefined;
+    }
+    if (isAddressInfo(addressInfo)) {
+        console.log("Opened server on ".concat(addressInfo.address, ":").concat(addressInfo.port));
+    }
+    else {
+        console.log("Opened server on ".concat(addressInfo));
+    }
 }

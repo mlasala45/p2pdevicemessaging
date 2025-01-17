@@ -3,8 +3,14 @@ var http = require('http');
 import { AddressInfo } from 'net'
 import { hasSubscribers } from 'diagnostics_channel';
 
+const LINE_BREAK = "\x1b[32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\x1b[0m"
+console.log(LINE_BREAK)
+console.log("\x1b[32mP2P Messaging App - Signaling Server v1.0.0\x1b[0m")
+console.log("\x1b[32mCreated by Micah LaSala, Jan 2025\x1b[0m")
+console.log(LINE_BREAK)
+
 const httpServer = http.createServer();
-httpServer.listen(3000, '0.0.0.0')
+httpServer.listen(3000, '0.0.0.0', () => { onServerStartedListening() })
 
 const server = new Server(httpServer, {
     cors: {
@@ -395,17 +401,18 @@ server.on("connection", (socket) => {
     })
 });
 
-//server.listen(3000)
 
-const addressInfo = server.httpServer.address();
+function onServerStartedListening() {
+    const addressInfo = server.httpServer.address();
 
-function isAddressInfo(addressInfo: AddressInfo | string | null): addressInfo is AddressInfo {
-    return (addressInfo as AddressInfo) != undefined;
-}
-
-if (isAddressInfo(addressInfo)) {
-    console.log(`Opened server on ${addressInfo.address}, on port ${addressInfo.port}`)
-}
-else {
-    console.log(`Opened server on ${addressInfo}`)
+    function isAddressInfo(addressInfo: AddressInfo | string | null): addressInfo is AddressInfo {
+        return (addressInfo as AddressInfo) != undefined;
+    }
+    
+    if (isAddressInfo(addressInfo)) {
+        console.log(`Opened server on ${addressInfo.address}:${addressInfo.port}`)
+    }
+    else {
+        console.log(`Opened server on ${addressInfo}`)
+    }
 }
