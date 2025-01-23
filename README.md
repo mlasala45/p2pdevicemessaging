@@ -39,11 +39,13 @@ Due to security constraints, the app requires the use of a Signaling Server, whi
   
 
 The app can be navigated using the Navigation Drawer on left side of the screen. In Settings, make sure you are connected to the Signal Server.
-![Drawer|500](https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/drawer.jpg)![Settings|500](https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/settings.jpg)
+<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/drawer.jpg" width="300">
+<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/settings.jpg" width="300">
 
 Use the 'Connect to new Device' dialog to send a connection request (make sure you use the 'By Signal Server' option). Your Home page will tell you your IP address, and the Code that corresponds to it. Enter the code for the other device's address, and press Send.
 
-![Add New Device](https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/add-device-dialog.png) ![Home Page](https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/home-page.jpg)
+<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/add-device-dialog.png" height="500">
+<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/home-page.jpg" width="300">
 
 The request should appear on the other device. Once accepted, a connection will be established between the two devices, and a chat channel will be created. After the initial connection, either device can connect or disconnect the channel.
 
@@ -106,6 +108,6 @@ I recommend the following development environment:
 
 - Windows Subsystem for Linux (WSL).
 
-- Text Editor and terminals: VSCode
+- Text Editor and Terminals: VSCode
 
 - Android Device Bridge (adb)
