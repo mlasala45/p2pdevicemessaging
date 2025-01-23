@@ -10,7 +10,9 @@ The app is **not currently in a production state**. It is functional in a develo
   
 
 These instructions will be expanded once the app reaches a production version.
-  
+
+
+<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/chat-screen.jpg" width="300">
 
 > [!IMPORTANT]
 > This app does not include any security features or encryption, and has not been designed with security in mind. Do not use it to transmit sensitive information.
@@ -39,8 +41,8 @@ Due to security constraints, the app requires the use of a Signaling Server, whi
   
 
 The app can be navigated using the Navigation Drawer on left side of the screen. In Settings, make sure you are connected to the Signal Server.
-<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/drawer.jpg" width="300">
-<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/settings.jpg" width="300">
+
+<img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/drawer.jpg" width="300"><img src="https://raw.githubusercontent.com/mlasala45/p2pdevicemessaging/main/readme_images/settings.jpg" width="300">
 
 Use the 'Connect to new Device' dialog to send a connection request (make sure you use the 'By Signal Server' option). Your Home page will tell you your IP address, and the Code that corresponds to it. Enter the code for the other device's address, and press Send.
 
